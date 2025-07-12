@@ -1,0 +1,1100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Happy Academy Weekly Timetable</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            font-family: 'Inter', sans-serif;
+        }
+        
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.6);
+            backdrop-filter: blur(4px);
+        }
+        
+        .modal.show {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 1rem;
+            animation: fadeIn 0.3s ease-out;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        
+        @keyframes slideUp {
+            from { 
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to { 
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .modal-content {
+            animation: slideUp 0.3s ease-out;
+        }
+        
+        .course-card {
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .course-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+            transition: left 0.5s;
+        }
+        
+        .course-card:hover::before {
+            left: 100%;
+        }
+        
+        .course-card:hover {
+            transform: translateY(-4px) scale(1.02);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.15);
+        }
+        
+        .student-count {
+            font-size: 0.75rem;
+            opacity: 0.9;
+        }
+        
+        .header-gradient {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+        
+        .card-gradient {
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+        }
+        
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            transition: all 0.3s ease;
+        }
+        
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(102, 126, 234, 0.4);
+        }
+        
+        .btn-secondary {
+            background: white;
+            border: 2px solid #e2e8f0;
+            transition: all 0.3s ease;
+        }
+        
+        .btn-secondary:hover {
+            border-color: #667eea;
+            background: #f8fafc;
+            transform: translateY(-1px);
+        }
+        
+        .table-header {
+            background: linear-gradient(135deg, #2d3748 0%, #4a5568 100%);
+        }
+        
+        .time-cell {
+            background: linear-gradient(135deg, #f7fafc 0%, #edf2f7 100%);
+            border-right: 3px solid #e2e8f0;
+        }
+        
+        .student-card {
+            transition: all 0.3s ease;
+            border-left: 4px solid transparent;
+        }
+        
+        .student-card:hover {
+            border-left-color: #667eea;
+            transform: translateX(4px);
+            background: #f8fafc;
+        }
+        
+        .course-badge {
+            transition: all 0.2s ease;
+        }
+        
+        .course-badge:hover {
+            transform: scale(1.05);
+        }
+        
+        .floating-action {
+            position: fixed;
+            bottom: 2rem;
+            right: 2rem;
+            z-index: 100;
+        }
+        
+        .pulse {
+            animation: pulse 2s infinite;
+        }
+        
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.7; }
+        }
+        
+        .scroll-shadow {
+            box-shadow: inset 0 10px 10px -10px rgba(0,0,0,0.1);
+        }
+        
+        .glass-effect {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        
+        .gradient-text {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        .stats-card {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+        
+        .loading-shimmer {
+            background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+            background-size: 200% 100%;
+            animation: shimmer 1.5s infinite;
+        }
+        
+        @keyframes shimmer {
+            0% { background-position: -200% 0; }
+            100% { background-position: 200% 0; }
+        }
+        
+        /* Sticky Header Styles */
+        .sticky-header {
+            position: sticky;
+            top: 0;
+            z-index: 50;
+            background: linear-gradient(135deg, #2d3748 0%, #4a5568 100%);
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+        }
+        
+        /* Progressive Scrolling Styles */
+        .timetable-container {
+            position: relative;
+        }
+        
+        .timetable-container.scroll-locked {
+            /* Don't change height - preserve full viewing area */
+        }
+        
+        .timetable-container.scroll-locked .timetable {
+            position: relative;
+        }
+        
+        .timetable-container.scroll-locked .timetable thead {
+            position: sticky;
+            top: 0;
+            z-index: 40;
+            background: linear-gradient(135deg, #2d3748 0%, #4a5568 100%);
+        }
+        
+        .timetable-container.scroll-locked .timetable thead th {
+            background: linear-gradient(135deg, #2d3748 0%, #4a5568 100%);
+            color: white;
+        }
+        
+        /* Ensure timetable body can scroll when locked */
+        .timetable-container.scroll-locked .overflow-x-auto {
+            max-height: calc(100vh - 100px);
+            overflow-y: auto;
+            overflow-x: auto; /* Allow horizontal scrolling */
+        }
+        
+        /* Preserve timetable container height */
+        .timetable-container.scroll-locked {
+            min-height: 600px;
+        }
+        
+        .scroll-indicator {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: rgba(0, 0, 0, 0.8);
+            color: white;
+            padding: 8px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            z-index: 1000;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            pointer-events: none;
+        }
+        
+        .scroll-indicator.show {
+            opacity: 1;
+        }
+        
+        /* Enhanced Table Borders and Gridlines */
+        .timetable-container {
+            border: 2px solid #e2e8f0;
+            border-radius: 16px;
+            overflow: hidden;
+        }
+        
+        .timetable {
+            border-collapse: separate;
+            border-spacing: 0;
+        }
+        
+        .timetable th,
+        .timetable td {
+            border-right: 1px solid #e2e8f0;
+            border-bottom: 1px solid #e2e8f0;
+            position: relative;
+        }
+        
+        .timetable th:last-child,
+        .timetable td:last-child {
+            border-right: none;
+        }
+        
+        .timetable tr:last-child td {
+            border-bottom: none;
+        }
+        
+        .time-cell-enhanced {
+            border-right: 3px solid #cbd5e0 !important;
+            font-weight: 600;
+            position: sticky;
+            left: 0;
+            z-index: 45;
+        }
+        
+        .header-cell {
+            border-bottom: 2px solid #4a5568 !important;
+        }
+        
+        .data-row {
+            transition: background-color 0.2s ease;
+        }
+        
+        .data-row:hover {
+            background-color: rgba(102, 126, 234, 0.05);
+        }
+        
+        .data-cell {
+            vertical-align: top;
+            min-height: 80px;
+        }
+    </style>
+</head>
+<body class="bg-gradient-to-br from-blue-50 via-white to-purple-50 min-h-screen">
+    <!-- Header Section -->
+    <div class="header-gradient text-white py-8 mb-8">
+        <div class="max-w-7xl mx-auto px-6">
+            <div class="text-center">
+                <h1 class="text-5xl font-bold mb-3 tracking-tight">
+                    🎓 Happy Academy
+                </h1>
+                <h2 class="text-2xl font-light mb-4 opacity-90">
+                    Weekly Timetable
+                </h2>
+                <p class="text-lg opacity-80 max-w-2xl mx-auto">
+                    Complete schedule showing classes, professors, and attending students
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <div class="max-w-7xl mx-auto px-6 pb-8">
+        <!-- Stats Overview -->
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+            <div class="stats-card rounded-xl p-6 text-center">
+                <div class="text-3xl font-bold" id="totalClasses">25</div>
+                <div class="text-sm opacity-90">Total Classes</div>
+            </div>
+            <div class="stats-card rounded-xl p-6 text-center">
+                <div class="text-3xl font-bold" id="totalStudents">24</div>
+                <div class="text-sm opacity-90">Total Students</div>
+            </div>
+            <div class="stats-card rounded-xl p-6 text-center">
+                <div class="text-3xl font-bold" id="totalProfessors">8</div>
+                <div class="text-sm opacity-90">Professors</div>
+            </div>
+            <div class="stats-card rounded-xl p-6 text-center">
+                <div class="text-3xl font-bold" id="totalCourses">7</div>
+                <div class="text-sm opacity-90">Course Tracks</div>
+            </div>
+        </div>
+
+        <!-- Navigation Buttons -->
+        <div class="flex justify-center gap-4 mb-8">
+            <button id="scheduleBtn" class="btn-primary px-8 py-3 rounded-xl font-semibold flex items-center gap-3 text-white shadow-lg">
+                📅 Schedule View
+            </button>
+            <button id="detailedBtn" class="btn-secondary px-8 py-3 rounded-xl font-semibold flex items-center gap-3 text-gray-700">
+                📋 Detailed Overview
+            </button>
+            <button id="studentsBtn" class="btn-secondary px-8 py-3 rounded-xl font-semibold flex items-center gap-3 text-gray-700">
+                👥 Student Overview
+            </button>
+        </div>
+
+        <!-- Schedule View -->
+        <div id="scheduleView" class="timetable-container glass-effect shadow-2xl">
+            <div class="overflow-x-auto scroll-shadow">
+                <table class="w-full timetable">
+                    <thead class="sticky-header text-white">
+                        <tr>
+                            <th class="px-6 py-4 text-left font-semibold text-lg header-cell time-cell-enhanced">
+                                🕐 Time
+                            </th>
+                            <th class="px-4 py-4 text-center font-semibold min-w-[220px] header-cell">Monday</th>
+                            <th class="px-4 py-4 text-center font-semibold min-w-[220px] header-cell">Tuesday</th>
+                            <th class="px-4 py-4 text-center font-semibold min-w-[220px] header-cell">Wednesday</th>
+                            <th class="px-4 py-4 text-center font-semibold min-w-[220px] header-cell">Thursday</th>
+                            <th class="px-4 py-4 text-center font-semibold min-w-[220px] header-cell">Friday</th>
+                            <th class="px-4 py-4 text-center font-semibold min-w-[220px] header-cell">Saturday</th>
+                            <th class="px-4 py-4 text-center font-semibold min-w-[220px] header-cell">Sunday</th>
+                        </tr>
+                    </thead>
+                    <tbody id="scheduleTableBody">
+                        <!-- Schedule rows will be populated by JavaScript -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Detailed Overview -->
+        <div id="detailedView" class="timetable-container glass-effect shadow-2xl" style="display: none;">
+            <div class="overflow-x-auto scroll-shadow">
+                <table class="w-full timetable">
+                    <thead class="sticky-header text-white">
+                        <tr>
+                            <th class="px-6 py-4 text-left font-semibold text-lg header-cell time-cell-enhanced">
+                                🕐 Time
+                            </th>
+                            <th class="px-4 py-4 text-center font-semibold min-w-[280px] header-cell">Monday</th>
+                            <th class="px-4 py-4 text-center font-semibold min-w-[280px] header-cell">Tuesday</th>
+                            <th class="px-4 py-4 text-center font-semibold min-w-[280px] header-cell">Wednesday</th>
+                            <th class="px-4 py-4 text-center font-semibold min-w-[280px] header-cell">Thursday</th>
+                            <th class="px-4 py-4 text-center font-semibold min-w-[280px] header-cell">Friday</th>
+                            <th class="px-4 py-4 text-center font-semibold min-w-[280px] header-cell">Saturday</th>
+                            <th class="px-4 py-4 text-center font-semibold min-w-[280px] header-cell">Sunday</th>
+                        </tr>
+                    </thead>
+                    <tbody id="detailedTableBody">
+                        <!-- Detailed schedule rows will be populated by JavaScript -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Student Overview -->
+        <div id="studentView" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8" style="display: none;">
+            <!-- Student cards will be populated by JavaScript -->
+            </div>
+    </div>
+
+    <!-- Floating Action Button -->
+    <div class="floating-action">
+        <button onclick="scrollToTop()" class="btn-primary w-14 h-14 rounded-full shadow-lg flex items-center justify-center text-white text-xl pulse">
+            ↑
+        </button>
+    </div>
+
+    <!-- Scroll Indicator -->
+    <div id="scrollIndicator" class="scroll-indicator">
+        📋 Timetable Scroll Mode
+    </div>
+
+    <!-- Modal for class details -->
+    <div id="classModal" class="modal">
+        <div class="modal-content glass-effect rounded-2xl max-w-2xl w-full max-h-[85vh] overflow-y-auto shadow-2xl">
+            <div class="p-8">
+                <div class="flex justify-between items-start mb-6">
+                    <h2 id="modalTitle" class="text-3xl font-bold gradient-text"></h2>
+                    <button id="closeModal" class="text-gray-500 hover:text-gray-700 text-3xl font-light transition-colors">×</button>
+                </div>
+                
+                <div class="space-y-6">
+                    <div id="modalDetails" class="flex flex-wrap gap-6 text-gray-700">
+                        <!-- Details will be populated by JavaScript -->
+                    </div>
+                    
+                    <div id="modalProfessor" class="flex items-center gap-3 text-gray-700 bg-gray-50 p-4 rounded-xl">
+                        <!-- Professor info will be populated by JavaScript -->
+                    </div>
+                    
+                    <div>
+                        <h3 class="font-bold text-xl text-gray-800 mb-4 flex items-center gap-3">
+                            👥 Attending Students (<span id="studentCount" class="text-blue-600">0</span>)
+                        </h3>
+                        <div id="modalStudents" class="space-y-3 max-h-80 overflow-y-auto">
+                            <!-- Students will be populated by JavaScript -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Data
+        const students = [
+            { name: 'Rishitha', course: 'Engineering', grade: 12 },
+            { name: 'Utkarsh Mahajan', course: 'Business', grade: 12 },
+            { name: 'Aditya Soorya Manukonda', course: 'Engineering', grade: 11 },
+            { name: 'Anish', course: 'Engineering', grade: 11 },
+            { name: 'Diya Anne', course: 'Engineering', grade: 12 },
+            { name: 'Ishan', course: 'Engineering', grade: 11 },
+            { name: 'Agastyaram Lanka', course: 'Engineering', grade: 10 },
+            { name: 'Raeyaan Muppaneni', course: 'Engineering', grade: 10 },
+            { name: 'Raeyaan Muppaneni', course: 'Business', grade: 10 },
+            { name: 'Rishon Valleru Muppaneni', course: 'Engineering', grade: 11 },
+            { name: 'Rishon Valleru Muppaneni', course: 'Business', grade: 11 },
+            { name: 'Rushil', course: 'Engineering', grade: 'UG 1st' },
+            { name: 'Rushil', course: 'Business', grade: 'UG 1st' },
+            { name: 'Lahari Lanka', course: 'Law/Forensic Science', grade: null },
+            { name: 'Lahari Lanka', course: 'Law/Forensic Science', grade: null },
+            { name: 'Rati Tanvi Shiddalinganagoud', course: 'Medicine', grade: 'UG 1st' },
+            { name: 'Rati Tanvi Shiddalinganagoud', course: 'Aviation', grade: 'UG 1st' },
+            { name: 'Sadhana Chebolu', course: 'LAW', grade: 10 },
+            { name: 'Harrison Max Huang', course: 'LAW', grade: 11 },
+            { name: 'Harrison Max Huang', course: 'Engineering', grade: 11 },
+            { name: 'Abhijit Thunaiselvam', course: 'Medicine', grade: 10 },
+            { name: 'Aishwarya Thunaiselvam', course: 'Medicine', grade: 10 },
+            { name: 'Andia Mahmoodinia', course: 'Medicine', grade: 12 },
+            { name: 'Arjun Kiran', course: 'Medicine', grade: 12 },
+            { name: 'Mahathi Rajkumar', course: 'Medicine', grade: 11 },
+            { name: 'Niveda Banerjee', course: 'Medicine', grade: 12 },
+            { name: 'Sri Skanda Hemmanur', course: 'Medicine', grade: 10 },
+            { name: 'Sai Vaishnavi kalam', course: 'Medicine', grade: 12 },
+            { name: 'Sanjana Ruth Bondada', course: 'Medicine', grade: 11 }
+        ];
+
+        const subjectMappings = {
+            'Engineering': ['AP Chemistry', 'AP Biology', 'AP Spanish', 'AP Seminar', 'AP Research', 'AI Course', 'Linear Algebra', 'Multivariable Calculus', 'Quantum Mechanics', 'Data Science', 'Entrepreneurship', 'AP Psychology'],
+            'Medicine': ['AP Biology', 'Medical Terminology', 'Organic Chemistry', 'Human Anatomy and Physiology', 'Biochemistry', 'Psychology', 'Neuroscience', 'Biostatistics', 'Microbiology'],
+            'Law/Forensic Science': ['AP Spanish', 'AP Seminar', 'AP Research', 'Entrepreneurship', 'AP Psychology', 'Principles of Management', 'Human Resources Management'],
+            'Business': ['AP Spanish', 'AP Seminar', 'AP Research', 'Entrepreneurship', 'AP Psychology', 'Principles of Management', 'Human Resources Management'],
+            'Aviation': ['Physics', 'AP Seminar', 'AP English', 'US History/Govt', 'AP Spanish', 'Entrepreneurship'],
+        };
+
+        const schedule = [
+            { course: 'AP Spanish', day: 'Monday', startTime: '10:00 AM', endTime: '11:00 AM', professor: 'Mark' },
+            { course: 'US History/Govt', day: 'Monday', startTime: '11:00 AM', endTime: '12:00 PM', professor: 'Mark' },
+            { course: 'Linear Algebra', day: 'Monday', startTime: '1:00 PM', endTime: '2:00 PM', professor: 'Jair Orelena' },
+            { course: 'AP English', day: 'Monday', startTime: '4:00 PM', endTime: '5:00 PM', professor: 'Steve' },
+            { course: 'AP Chemistry', day: 'Monday', startTime: '5:00 PM', endTime: '6:00 PM', professor: 'Amirthaganessan' },
+            { course: 'AP Seminar', day: 'Monday', startTime: '6:00 PM', endTime: '7:00 PM', professor: 'G Madhuri' },
+            { course: 'Medical Terminology', day: 'Monday', startTime: '7:00 PM', endTime: '8:00 PM', professor: 'Neela Srinivas' },
+            { course: 'Multivariable Calculus', day: 'Tuesday', startTime: '1:00 PM', endTime: '2:00 PM', professor: 'Jair Orelena' },
+            { course: 'Organic Chemistry', day: 'Tuesday', startTime: '5:00 PM', endTime: '6:00 PM', professor: 'Amirthaganessan' },
+            { course: 'AP Research', day: 'Tuesday', startTime: '6:00 PM', endTime: '7:00 PM', professor: 'G Madhuri' },
+            { course: 'Human Anatomy and Physiology', day: 'Tuesday', startTime: '7:00 PM', endTime: '8:00 PM', professor: 'Neela Srinivas' },
+            { course: 'Biochemistry', day: 'Wednesday', startTime: '5:00 PM', endTime: '6:00 PM', professor: 'Amirthaganessan' },
+            { course: 'Biostatistics', day: 'Wednesday', startTime: '6:00 PM', endTime: '7:00 PM', professor: 'G Madhuri' },
+            { course: 'Public Health', day: 'Wednesday', startTime: '7:00 PM', endTime: '8:00 PM', professor: 'Neela Srinivas' },
+            { course: 'Entrepreneurship', day: 'Thursday', startTime: '4:00 PM', endTime: '5:00 PM', professor: 'Steve' },
+            { course: 'Data Science', day: 'Thursday', startTime: '5:00 PM', endTime: '6:00 PM', professor: 'Karthikeyan' },
+            { course: 'AP Biology', day: 'Thursday', startTime: '6:00 PM', endTime: '7:00 PM', professor: 'Abby' },
+            { course: 'AI Course', day: 'Thursday', startTime: '7:00 PM', endTime: '8:00 PM', professor: 'Ambedkar' },
+            { course: 'Quantum Mechanics', day: 'Friday', startTime: '5:00 PM', endTime: '6:00 PM', professor: 'Swaminathan' },
+            { course: 'Neurobiology', day: 'Friday', startTime: '6:00 PM', endTime: '7:00 PM', professor: 'Abby' },
+            { course: 'AP Psychology', day: 'Friday', startTime: '7:00 PM', endTime: '8:00 PM', professor: 'G.Singaravelu' },
+            { course: 'Physics', day: 'Saturday', startTime: '5:00 PM', endTime: '6:00 PM', professor: 'Swaminathan' },
+            { course: 'Microbiology', day: 'Saturday', startTime: '6:00 PM', endTime: '7:00 PM', professor: 'Abby' },
+            { course: 'Principles of Management', day: 'Saturday', startTime: '7:00 PM', endTime: '8:00 PM', professor: 'G.Singaravelu' },
+            { course: 'Human Resources Management', day: 'Sunday', startTime: '3:00 PM', endTime: '4:00 PM', professor: 'Ambedkar' }
+        ];
+
+        const days = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
+        const timeSlots = ['10:00 AM', '11:00 AM', '1:00 PM', '3:00 PM', '4:00 PM', '5:00 PM', '6:00 PM', '7:00 PM'];
+
+        // Helper functions
+        function getStudentsForClass(courseName) {
+            const attendingStudents = [];
+            
+            students.forEach(student => {
+                const studentCourse = student.course === 'LAW' ? 'Law/Forensic Science' : 
+                                    student.course;
+                
+                if (subjectMappings[studentCourse] && subjectMappings[studentCourse].includes(courseName)) {
+                    attendingStudents.push(student);
+                }
+            });
+            
+            return attendingStudents;
+        }
+
+        function getUniqueStudents(studentsList) {
+            const uniqueStudents = [];
+            const seenNames = new Set();
+            
+            studentsList.forEach(student => {
+                if (!seenNames.has(student.name)) {
+                    seenNames.add(student.name);
+                    uniqueStudents.push(student);
+                }
+            });
+            
+            return uniqueStudents;
+        }
+
+        function getClassForTimeSlot(day, timeSlot) {
+            return schedule.find(cls => cls.day === day && cls.startTime === timeSlot);
+        }
+
+        function getCourseColor(courseName) {
+            const colors = {
+                'AP Spanish': 'bg-gradient-to-br from-blue-100 to-blue-200 border-blue-300 text-blue-800',
+                'US History/Govt': 'bg-gradient-to-br from-green-100 to-green-200 border-green-300 text-green-800',
+                'Linear Algebra': 'bg-gradient-to-br from-purple-100 to-purple-200 border-purple-300 text-purple-800',
+                'AP English': 'bg-gradient-to-br from-yellow-100 to-yellow-200 border-yellow-300 text-yellow-800',
+                'AP Chemistry': 'bg-gradient-to-br from-red-100 to-red-200 border-red-300 text-red-800',
+                'AP Seminar': 'bg-gradient-to-br from-indigo-100 to-indigo-200 border-indigo-300 text-indigo-800',
+                'Medical Terminology': 'bg-gradient-to-br from-pink-100 to-pink-200 border-pink-300 text-pink-800',
+                'Multivariable Calculus': 'bg-gradient-to-br from-purple-100 to-purple-200 border-purple-300 text-purple-800',
+                'Organic Chemistry': 'bg-gradient-to-br from-red-100 to-red-200 border-red-300 text-red-800',
+                'AP Research': 'bg-gradient-to-br from-indigo-100 to-indigo-200 border-indigo-300 text-indigo-800',
+                'Human Anatomy and Physiology': 'bg-gradient-to-br from-pink-100 to-pink-200 border-pink-300 text-pink-800',
+                'Biochemistry': 'bg-gradient-to-br from-red-100 to-red-200 border-red-300 text-red-800',
+                'Biostatistics': 'bg-gradient-to-br from-teal-100 to-teal-200 border-teal-300 text-teal-800',
+                'Public Health': 'bg-gradient-to-br from-pink-100 to-pink-200 border-pink-300 text-pink-800',
+                'Entrepreneurship': 'bg-gradient-to-br from-orange-100 to-orange-200 border-orange-300 text-orange-800',
+                'Data Science': 'bg-gradient-to-br from-cyan-100 to-cyan-200 border-cyan-300 text-cyan-800',
+                'AP Biology': 'bg-gradient-to-br from-green-100 to-green-200 border-green-300 text-green-800',
+                'AI Course': 'bg-gradient-to-br from-gray-100 to-gray-200 border-gray-300 text-gray-800',
+                'Quantum Mechanics': 'bg-gradient-to-br from-purple-100 to-purple-200 border-purple-300 text-purple-800',
+                'Neurobiology': 'bg-gradient-to-br from-pink-100 to-pink-200 border-pink-300 text-pink-800',
+                'AP Psychology': 'bg-gradient-to-br from-yellow-100 to-yellow-200 border-yellow-300 text-yellow-800',
+                'Physics': 'bg-gradient-to-br from-blue-100 to-blue-200 border-blue-300 text-blue-800',
+                'Microbiology': 'bg-gradient-to-br from-green-100 to-green-200 border-green-300 text-green-800',
+                'Principles of Management': 'bg-gradient-to-br from-orange-100 to-orange-200 border-orange-300 text-orange-800',
+                'Human Resources Management': 'bg-gradient-to-br from-orange-100 to-orange-200 border-orange-300 text-orange-800'
+            };
+            return colors[courseName] || 'bg-gradient-to-br from-gray-100 to-gray-200 border-gray-300 text-gray-800';
+        }
+
+        function getStreamAbbreviation(course) {
+            const abbreviations = {
+                'Engineering': 'ENG',
+                'Medicine': 'MED',
+                'Law/Forensic Science': 'LAW',
+                'Business': 'BUS',
+                'Aviation': 'AVI'
+            };
+            return abbreviations[course] || course.substring(0, 3).toUpperCase();
+        }
+
+        // DOM manipulation functions
+        function renderSchedule() {
+            const tbody = document.getElementById('scheduleTableBody');
+            tbody.innerHTML = '';
+
+            timeSlots.forEach((timeSlot, index) => {
+                const row = document.createElement('tr');
+                row.className = `data-row ${index % 2 === 0 ? 'bg-white' : 'bg-gray-50'}`;
+                
+                // Time column
+                const timeCell = document.createElement('td');
+                timeCell.className = 'px-6 py-4 font-semibold text-gray-700 time-cell-enhanced';
+                timeCell.textContent = timeSlot;
+                row.appendChild(timeCell);
+
+                // Day columns
+                days.forEach(day => {
+                    const dayCell = document.createElement('td');
+                    dayCell.className = 'px-3 py-4 text-center data-cell';
+                    
+                    const classInfo = getClassForTimeSlot(day, timeSlot);
+                    if (classInfo) {
+                        const classDiv = document.createElement('div');
+                        classDiv.className = `p-4 rounded-xl border-2 cursor-pointer course-card ${getCourseColor(classInfo.course)} shadow-sm`;
+                        classDiv.onclick = () => openModal(classInfo);
+                        
+                        const uniqueStudents = getUniqueStudents(getStudentsForClass(classInfo.course));
+                        
+                        classDiv.innerHTML = `
+                            <div class="font-bold text-sm mb-2">${classInfo.course}</div>
+                            <div class="text-xs opacity-80 mb-2 flex items-center justify-center gap-1">
+                                👤 ${classInfo.professor}
+                            </div>
+                            <div class="text-xs opacity-80 flex items-center justify-center gap-1">
+                                👥 ${uniqueStudents.length} students
+                            </div>
+                        `;
+                        
+                        dayCell.appendChild(classDiv);
+                    } else {
+                        dayCell.innerHTML = '<div class="text-gray-400 text-sm py-8">-</div>';
+                    }
+                    
+                    row.appendChild(dayCell);
+                });
+                
+                tbody.appendChild(row);
+            });
+        }
+
+        function renderDetailedView() {
+            const tbody = document.getElementById('detailedTableBody');
+            tbody.innerHTML = '';
+
+            timeSlots.forEach((timeSlot, index) => {
+                const row = document.createElement('tr');
+                row.className = `data-row ${index % 2 === 0 ? 'bg-white' : 'bg-gray-50'}`;
+                
+                // Time column
+                const timeCell = document.createElement('td');
+                timeCell.className = 'px-6 py-4 font-semibold text-gray-700 time-cell-enhanced align-top';
+                timeCell.textContent = timeSlot;
+                row.appendChild(timeCell);
+
+                // Day columns
+                days.forEach(day => {
+                    const dayCell = document.createElement('td');
+                    dayCell.className = 'px-3 py-4 align-top data-cell';
+                    
+                    const classInfo = getClassForTimeSlot(day, timeSlot);
+                    if (classInfo) {
+                        const classDiv = document.createElement('div');
+                        classDiv.className = `p-4 rounded-xl border-2 ${getCourseColor(classInfo.course)} shadow-sm min-h-[200px]`;
+                        
+                        const uniqueStudents = getUniqueStudents(getStudentsForClass(classInfo.course));
+                        
+                        // Group students by course for better organization
+                        const studentsByCourse = {};
+                        uniqueStudents.forEach(student => {
+                            const studentCourse = student.course === 'LAW' ? 'Law/Forensic Science' : student.course;
+                            if (!studentsByCourse[studentCourse]) {
+                                studentsByCourse[studentCourse] = [];
+                            }
+                            studentsByCourse[studentCourse].push(student);
+                        });
+                        
+                        let studentsHtml = '';
+                        Object.entries(studentsByCourse).forEach(([course, courseStudents]) => {
+                            const abbrev = getStreamAbbreviation(course);
+                            studentsHtml += courseStudents.map(student => 
+                                `<div class="text-xs text-gray-700 mb-1 flex items-center justify-between">
+                                    <span class="truncate flex-1">${student.name}</span>
+                                    <span class="ml-2 px-2 py-0.5 bg-white bg-opacity-60 rounded text-xs font-medium">${abbrev}</span>
+                                </div>`
+                            ).join('');
+                        });
+                        
+                        classDiv.innerHTML = `
+                            <div class="mb-3">
+                                <div class="font-bold text-sm mb-2 leading-tight">${classInfo.course}</div>
+                                <div class="text-xs opacity-90 mb-2 flex items-center gap-1">
+                                    👤 <span class="font-medium">${classInfo.professor}</span>
+                                </div>
+                                <div class="text-xs opacity-90 mb-3 flex items-center gap-1">
+                                    👥 <span class="font-medium">${uniqueStudents.length} students</span>
+                                </div>
+                            </div>
+                            <div class="border-t border-white border-opacity-30 pt-3">
+                                <div class="text-xs font-medium mb-2 opacity-90">Students:</div>
+                                <div class="space-y-1">
+                                    ${studentsHtml}
+                                </div>
+                            </div>
+                        `;
+                        
+                        dayCell.appendChild(classDiv);
+                    } else {
+                        dayCell.innerHTML = '<div class="text-gray-400 text-sm py-8 text-center">-</div>';
+                    }
+                    
+                    row.appendChild(dayCell);
+                });
+                
+                tbody.appendChild(row);
+            });
+        }
+
+        function renderStudentView() {
+            const container = document.getElementById('studentView');
+            container.innerHTML = '';
+
+            Object.entries(subjectMappings).forEach(([course, subjects]) => {
+                const courseStudents = students.filter(student => {
+                    const studentCourse = student.course === 'LAW' ? 'Law/Forensic Science' : 
+                                        student.course;
+                    return studentCourse === course;
+                });
+
+                const courseCard = document.createElement('div');
+                courseCard.className = 'glass-effect rounded-2xl shadow-xl p-8 hover:shadow-2xl transition-all duration-300';
+                
+                const uniqueStudents = getUniqueStudents(courseStudents);
+                
+                courseCard.innerHTML = `
+                    <div class="text-center mb-6">
+                        <h3 class="text-2xl font-bold gradient-text mb-2">${course}</h3>
+                        <div class="w-16 h-1 bg-gradient-to-r from-blue-500 to-purple-500 mx-auto rounded-full"></div>
+                    </div>
+                    
+                    <div class="mb-6">
+                        <div class="flex items-center justify-between mb-4">
+                            <h4 class="font-semibold text-gray-800 flex items-center gap-2">
+                                👥 Students
+                            </h4>
+                            <span class="bg-blue-100 text-blue-800 px-3 py-1 rounded-full text-sm font-medium">
+                                ${uniqueStudents.length}
+                            </span>
+                        </div>
+                        <div class="space-y-2 max-h-48 overflow-y-auto">
+                            ${uniqueStudents.map(student => `
+                                <div class="student-card text-sm text-gray-700 bg-gray-50 px-4 py-3 rounded-lg flex justify-between items-center">
+                                    <span class="font-medium">${student.name}</span>
+                                    <span class="text-xs text-gray-500">${student.grade ? `Grade ${student.grade}` : 'N/A'}</span>
+                                </div>
+                            `).join('')}
+                        </div>
+                    </div>
+                    
+                    <div>
+                        <div class="flex items-center justify-between mb-4">
+                            <h4 class="font-semibold text-gray-800 flex items-center gap-2">
+                                📚 Subjects
+                            </h4>
+                            <span class="bg-green-100 text-green-800 px-3 py-1 rounded-full text-sm font-medium">
+                                ${subjects.length}
+                            </span>
+                        </div>
+                        <div class="flex flex-wrap gap-2">
+                            ${subjects.map(subject => `
+                                <div class="course-badge text-xs text-gray-600 bg-blue-50 px-3 py-2 rounded-lg border border-blue-200">
+                                    ${subject}
+                                </div>
+                            `).join('')}
+                        </div>
+                    </div>
+                `;
+                
+                container.appendChild(courseCard);
+            });
+        }
+
+        function openModal(classInfo) {
+            const modal = document.getElementById('classModal');
+            const modalTitle = document.getElementById('modalTitle');
+            const modalDetails = document.getElementById('modalDetails');
+            const modalProfessor = document.getElementById('modalProfessor');
+            const modalStudents = document.getElementById('modalStudents');
+            const studentCount = document.getElementById('studentCount');
+
+            modalTitle.textContent = classInfo.course;
+            
+            modalDetails.innerHTML = `
+                <div class="flex items-center gap-3 bg-blue-50 px-4 py-3 rounded-xl">
+                    📅 <span class="font-semibold">${classInfo.day}</span>
+                </div>
+                <div class="flex items-center gap-3 bg-green-50 px-4 py-3 rounded-xl">
+                    🕐 <span class="font-semibold">${classInfo.startTime} - ${classInfo.endTime}</span>
+                </div>
+            `;
+            
+            modalProfessor.innerHTML = `
+                👤 <span class="font-semibold text-lg">Professor: ${classInfo.professor}</span>
+            `;
+            
+            const uniqueStudents = getUniqueStudents(getStudentsForClass(classInfo.course));
+            studentCount.textContent = uniqueStudents.length;
+            
+            modalStudents.innerHTML = uniqueStudents.map(student => `
+                <div class="student-card flex justify-between items-center p-4 bg-gray-50 rounded-xl">
+                    <div>
+                        <span class="font-semibold text-gray-800">${student.name}</span>
+                        <div class="text-sm text-gray-500">${student.course}</div>
+                    </div>
+                    <div class="text-sm text-gray-500 bg-white px-3 py-1 rounded-full">
+                        ${student.grade ? `Grade ${student.grade}` : 'N/A'}
+                    </div>
+                </div>
+            `).join('');
+            
+            modal.classList.add('show');
+        }
+
+        function closeModal() {
+            const modal = document.getElementById('classModal');
+            modal.classList.remove('show');
+        }
+
+        function scrollToTop() {
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function updateStats() {
+            const uniqueStudents = getUniqueStudents(students);
+            const uniqueProfessors = [...new Set(schedule.map(cls => cls.professor))];
+            const uniqueCourses = Object.keys(subjectMappings);
+            
+            document.getElementById('totalClasses').textContent = schedule.length;
+            document.getElementById('totalStudents').textContent = uniqueStudents.length;
+            document.getElementById('totalProfessors').textContent = uniqueProfessors.length;
+            document.getElementById('totalCourses').textContent = uniqueCourses.length;
+        }
+
+        // Event listeners
+        document.getElementById('scheduleBtn').addEventListener('click', () => {
+            document.getElementById('scheduleView').style.display = 'block';
+            document.getElementById('detailedView').style.display = 'none';
+            document.getElementById('studentView').style.display = 'none';
+            document.getElementById('scheduleBtn').className = 'btn-primary px-8 py-3 rounded-xl font-semibold flex items-center gap-3 text-white shadow-lg';
+            document.getElementById('detailedBtn').className = 'btn-secondary px-8 py-3 rounded-xl font-semibold flex items-center gap-3 text-gray-700';
+            document.getElementById('studentsBtn').className = 'btn-secondary px-8 py-3 rounded-xl font-semibold flex items-center gap-3 text-gray-700';
+            updateCurrentView('schedule');
+        });
+
+        document.getElementById('detailedBtn').addEventListener('click', () => {
+            document.getElementById('scheduleView').style.display = 'none';
+            document.getElementById('detailedView').style.display = 'block';
+            document.getElementById('studentView').style.display = 'none';
+            document.getElementById('scheduleBtn').className = 'btn-secondary px-8 py-3 rounded-xl font-semibold flex items-center gap-3 text-gray-700';
+            document.getElementById('detailedBtn').className = 'btn-primary px-8 py-3 rounded-xl font-semibold flex items-center gap-3 text-white shadow-lg';
+            document.getElementById('studentsBtn').className = 'btn-secondary px-8 py-3 rounded-xl font-semibold flex items-center gap-3 text-gray-700';
+            updateCurrentView('detailed');
+        });
+
+        document.getElementById('studentsBtn').addEventListener('click', () => {
+            document.getElementById('scheduleView').style.display = 'none';
+            document.getElementById('detailedView').style.display = 'none';
+            document.getElementById('studentView').style.display = 'grid';
+            document.getElementById('scheduleBtn').className = 'btn-secondary px-8 py-3 rounded-xl font-semibold flex items-center gap-3 text-gray-700';
+            document.getElementById('detailedBtn').className = 'btn-secondary px-8 py-3 rounded-xl font-semibold flex items-center gap-3 text-gray-700';
+            document.getElementById('studentsBtn').className = 'btn-primary px-8 py-3 rounded-xl font-semibold flex items-center gap-3 text-white shadow-lg';
+            updateCurrentView('students');
+        });
+
+        document.getElementById('closeModal').addEventListener('click', closeModal);
+        
+        document.getElementById('classModal').addEventListener('click', (e) => {
+            if (e.target === document.getElementById('classModal')) {
+                closeModal();
+            }
+        });
+
+        // Progressive Scrolling Implementation
+        let isScrollLocked = false;
+        let headerOffset = 0;
+        let currentView = 'schedule';
+
+        function initializeProgressiveScrolling() {
+            // Calculate header offset (distance from top of page to timetable)
+            const timetableContainer = document.querySelector('.timetable-container');
+            if (timetableContainer) {
+                const rect = timetableContainer.getBoundingClientRect();
+                headerOffset = rect.top + window.scrollY;
+                
+                // Set CSS custom property for dynamic height calculation
+                document.documentElement.style.setProperty('--header-offset', `${headerOffset}px`);
+            }
+
+            // Add scroll event listener
+            window.addEventListener('scroll', handleScroll);
+            
+            // Add wheel event listener for smooth transition
+            document.addEventListener('wheel', handleWheel, { passive: false });
+            
+            // Add scroll event listener for locked state
+            document.addEventListener('scroll', handleScrollLocked);
+            
+            // Add touch event listeners for mobile horizontal scrolling
+            document.addEventListener('touchstart', handleTouchStart, { passive: false });
+            document.addEventListener('touchmove', handleTouchMove, { passive: false });
+        }
+
+        function handleScroll() {
+            if (isScrollLocked) return;
+
+            const scrollY = window.scrollY;
+            // Get the currently visible timetable container
+            const timetableContainer = document.querySelector('.timetable-container[style*="display: block"], .timetable-container:not([style*="display: none"])');
+            
+            if (!timetableContainer) return;
+
+            // Get the timetable header position
+            const timetableHeader = timetableContainer.querySelector('thead');
+            if (!timetableHeader) return;
+            
+            const headerRect = timetableHeader.getBoundingClientRect();
+            
+            // Check if the header is about to go out of view (within 50px of top)
+            if (headerRect.top <= 50) {
+                lockScroll();
+            }
+        }
+
+        function handleWheel(event) {
+            if (!isScrollLocked) return;
+
+            // Get the currently visible timetable container that is scroll-locked
+            const scrollContainer = document.querySelector('.timetable-container.scroll-locked[style*="display: block"] .overflow-x-auto, .timetable-container.scroll-locked:not([style*="display: none"]) .overflow-x-auto');
+            if (!scrollContainer) return;
+
+            // Prevent default scroll behavior only for vertical scrolling
+            if (Math.abs(event.deltaY) > Math.abs(event.deltaX)) {
+                event.preventDefault();
+
+                // Apply scroll to the scrollable container
+                const delta = event.deltaY;
+                scrollContainer.scrollTop += delta;
+
+                // Check if we should unlock scroll (scrolled to top of timetable)
+                if (scrollContainer.scrollTop <= 0 && delta < 0) {
+                    unlockScroll();
+                }
+            }
+            // For horizontal scrolling, let the browser handle it naturally
+        }
+
+        function handleScrollLocked() {
+            if (!isScrollLocked) return;
+            
+            const scrollContainer = document.querySelector('.timetable-container.scroll-locked[style*="display: block"] .overflow-x-auto, .timetable-container.scroll-locked:not([style*="display: none"]) .overflow-x-auto');
+            if (!scrollContainer) return;
+            
+            // If user scrolls up and reaches the top, allow normal page scrolling
+            if (scrollContainer.scrollTop <= 0) {
+                unlockScroll();
+            }
+        }
+
+        // Touch event handlers for mobile horizontal scrolling
+        let touchStartX = 0;
+        let touchStartY = 0;
+
+        function handleTouchStart(event) {
+            if (!isScrollLocked) return;
+            
+            touchStartX = event.touches[0].clientX;
+            touchStartY = event.touches[0].clientY;
+        }
+
+        function handleTouchMove(event) {
+            if (!isScrollLocked) return;
+
+            const scrollContainer = document.querySelector('.timetable-container.scroll-locked[style*="display: block"] .overflow-x-auto, .timetable-container.scroll-locked:not([style*="display: none"]) .overflow-x-auto');
+            if (!scrollContainer) return;
+
+            const touchX = event.touches[0].clientX;
+            const touchY = event.touches[0].clientY;
+            const deltaX = touchX - touchStartX;
+            const deltaY = touchY - touchStartY;
+
+            // If horizontal movement is greater than vertical, allow horizontal scrolling
+            if (Math.abs(deltaX) > Math.abs(deltaY)) {
+                // Let the browser handle horizontal scrolling naturally
+                return;
+            } else {
+                // Prevent default for vertical scrolling and handle it ourselves
+                event.preventDefault();
+                scrollContainer.scrollTop -= deltaY;
+                
+                // Check if we should unlock scroll
+                if (scrollContainer.scrollTop <= 0 && deltaY > 0) {
+                    unlockScroll();
+                }
+            }
+        }
+
+        function lockScroll() {
+            if (isScrollLocked) return;
+
+            isScrollLocked = true;
+            // Get the currently visible timetable container
+            const timetableContainer = document.querySelector('.timetable-container[style*="display: block"], .timetable-container:not([style*="display: none"])');
+            const indicator = document.getElementById('scrollIndicator');
+
+            if (timetableContainer) {
+                timetableContainer.classList.add('scroll-locked');
+                
+                // Don't change page scroll - let content above scroll away naturally
+                // The header will become sticky when it reaches the top
+
+                // Show indicator
+                if (indicator) {
+                    indicator.classList.add('show');
+                    setTimeout(() => indicator.classList.remove('show'), 2000);
+                }
+            }
+        }
+
+        function unlockScroll() {
+            if (!isScrollLocked) return;
+
+            isScrollLocked = false;
+            // Get the currently visible timetable container
+            const timetableContainer = document.querySelector('.timetable-container[style*="display: block"], .timetable-container:not([style*="display: none"])');
+            const scrollContainer = document.querySelector('.timetable-container.scroll-locked[style*="display: block"] .overflow-x-auto, .timetable-container.scroll-locked:not([style*="display: none"]) .overflow-x-auto');
+            const indicator = document.getElementById('scrollIndicator');
+
+            if (timetableContainer) {
+                timetableContainer.classList.remove('scroll-locked');
+            }
+            
+            if (scrollContainer) {
+                scrollContainer.scrollTop = 0;
+            }
+
+            // Hide indicator
+            if (indicator) {
+                indicator.classList.remove('show');
+            }
+        }
+
+        function updateCurrentView(viewName) {
+            currentView = viewName;
+            
+            // Reset scroll state when switching views
+            if (isScrollLocked) {
+                unlockScroll();
+            }
+            
+            // Recalculate header offset when view changes
+            setTimeout(() => {
+                const timetableContainer = document.querySelector('.timetable-container[style*="display: block"], .timetable-container:not([style*="display: none"])');
+                if (timetableContainer) {
+                    const rect = timetableContainer.getBoundingClientRect();
+                    headerOffset = rect.top + window.scrollY;
+                    document.documentElement.style.setProperty('--header-offset', `${headerOffset}px`);
+                }
+            }, 100);
+        }
+
+        // Initialize
+        updateStats();
+        renderSchedule();
+        renderDetailedView();
+        renderStudentView();
+        
+        // Initialize progressive scrolling after a short delay to ensure DOM is ready
+        setTimeout(initializeProgressiveScrolling, 500);
+    </script>
+</body>
+</html>
