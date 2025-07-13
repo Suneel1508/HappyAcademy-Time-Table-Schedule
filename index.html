@@ -355,8 +355,14 @@
             <button id="detailedBtn" class="btn-secondary px-8 py-3 rounded-xl font-semibold flex items-center gap-3 text-gray-700">
                 📋 Detailed Overview
             </button>
+            <button id="coursesBtn" class="btn-secondary px-8 py-3 rounded-xl font-semibold flex items-center gap-3 text-gray-700">
+                📚 Course Overview
+            </button>
             <button id="studentsBtn" class="btn-secondary px-8 py-3 rounded-xl font-semibold flex items-center gap-3 text-gray-700">
                 👥 Student Overview
+            </button>
+            <button id="teachersBtn" class="btn-secondary px-8 py-3 rounded-xl font-semibold flex items-center gap-3 text-gray-700">
+                👨‍🏫 Teacher Overview
             </button>
         </div>
 
@@ -410,10 +416,20 @@
             </div>
         </div>
 
+        <!-- Course Overview -->
+        <div id="courseView" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8" style="display: none;">
+            <!-- Course cards will be populated by JavaScript -->
+        </div>
+
         <!-- Student Overview -->
         <div id="studentView" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8" style="display: none;">
             <!-- Student cards will be populated by JavaScript -->
-            </div>
+        </div>
+
+        <!-- Teacher Overview -->
+        <div id="teacherView" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8" style="display: none;">
+            <!-- Teacher cards will be populated by JavaScript -->
+        </div>
     </div>
 
     <!-- Floating Action Button -->
@@ -459,38 +475,152 @@
         </div>
     </div>
 
+    <!-- Modal for student details -->
+    <div id="studentModal" class="modal">
+        <div class="modal-content glass-effect rounded-2xl max-w-2xl w-full max-h-[85vh] overflow-y-auto shadow-2xl">
+            <div class="p-8">
+                <div class="flex justify-between items-start mb-6">
+                    <h2 id="studentModalTitle" class="text-3xl font-bold gradient-text"></h2>
+                    <button id="closeStudentModal" class="text-gray-500 hover:text-gray-700 text-3xl font-light transition-colors">×</button>
+                </div>
+                
+                <div class="space-y-6">
+                    <div id="studentModalStatus" class="flex items-center gap-3 text-gray-700 bg-gray-50 p-4 rounded-xl">
+                        <!-- Status will be populated by JavaScript -->
+                    </div>
+                    
+                    <div>
+                        <h3 class="font-bold text-xl text-gray-800 mb-4 flex items-center gap-3">
+                            📚 Enrolled Courses
+                        </h3>
+                        <div id="studentModalCourses" class="space-y-3 max-h-40 overflow-y-auto">
+                            <!-- Courses will be populated by JavaScript -->
+                        </div>
+                    </div>
+                    
+                    <div>
+                        <h3 class="font-bold text-xl text-gray-800 mb-4 flex items-center gap-3">
+                            📖 Subjects
+                        </h3>
+                        <div id="studentModalSubjects" class="space-y-3 max-h-40 overflow-y-auto">
+                            <!-- Subjects will be populated by JavaScript -->
+                        </div>
+                    </div>
+                    
+                    <div>
+                        <h3 class="font-bold text-xl text-gray-800 mb-4 flex items-center gap-3">
+                            ⚙️ Status Editor
+                        </h3>
+                        <div class="flex items-center gap-4">
+                            <label for="studentStatusSelect" class="font-medium text-gray-700">Current Status:</label>
+                            <select id="studentStatusSelect" class="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                                <option value="active">Active</option>
+                                <option value="ready_to_start">Ready to Start</option>
+                                <option value="preparatory">Preparatory</option>
+                                <option value="on_vacation">On Vacation</option>
+                            </select>
+                            <button id="updateStudentStatus" class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors">
+                                Update
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal for teacher details -->
+    <div id="teacherModal" class="modal">
+        <div class="modal-content glass-effect rounded-2xl max-w-2xl w-full max-h-[85vh] overflow-y-auto shadow-2xl">
+            <div class="p-8">
+                <div class="flex justify-between items-start mb-6">
+                    <h2 id="teacherModalTitle" class="text-3xl font-bold gradient-text"></h2>
+                    <button id="closeTeacherModal" class="text-gray-500 hover:text-gray-700 text-3xl font-light transition-colors">×</button>
+                </div>
+                
+                <div class="space-y-6">
+                    <div id="teacherModalInfo" class="flex items-center gap-3 text-gray-700 bg-gray-50 p-4 rounded-xl">
+                        <!-- Teacher info will be populated by JavaScript -->
+                    </div>
+                    
+                    <div>
+                        <h3 class="font-bold text-xl text-gray-800 mb-4 flex items-center gap-3">
+                            📚 Subjects Taught
+                        </h3>
+                        <div id="teacherModalSubjects" class="space-y-3 max-h-40 overflow-y-auto">
+                            <!-- Subjects will be populated by JavaScript -->
+                        </div>
+                    </div>
+                    
+                    <div>
+                        <h3 class="font-bold text-xl text-gray-800 mb-4 flex items-center gap-3">
+                            👥 Students
+                        </h3>
+                        <div id="teacherModalStudents" class="space-y-3 max-h-40 overflow-y-auto">
+                            <!-- Students will be populated by JavaScript -->
+                        </div>
+                    </div>
+                    
+                    <div>
+                        <h3 class="font-bold text-xl text-gray-800 mb-4 flex items-center gap-3">
+                            📅 Schedule
+                        </h3>
+                        <div id="teacherModalSchedule" class="space-y-3 max-h-40 overflow-y-auto">
+                            <!-- Schedule will be populated by JavaScript -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <script>
         // Data
         const students = [
-            { name: 'Rishitha', course: 'Engineering', grade: 12 },
-            { name: 'Utkarsh Mahajan', course: 'Business', grade: 12 },
-            { name: 'Aditya Soorya Manukonda', course: 'Engineering', grade: 11 },
-            { name: 'Anish', course: 'Engineering', grade: 11 },
-            { name: 'Diya Anne', course: 'Engineering', grade: 12 },
-            { name: 'Ishan', course: 'Engineering', grade: 11 },
-            { name: 'Agastyaram Lanka', course: 'Engineering', grade: 10 },
-            { name: 'Raeyaan Muppaneni', course: 'Engineering', grade: 10 },
-            { name: 'Raeyaan Muppaneni', course: 'Business', grade: 10 },
-            { name: 'Rishon Valleru Muppaneni', course: 'Engineering', grade: 11 },
-            { name: 'Rishon Valleru Muppaneni', course: 'Business', grade: 11 },
-            { name: 'Rushil', course: 'Engineering', grade: 'UG 1st' },
-            { name: 'Rushil', course: 'Business', grade: 'UG 1st' },
-            { name: 'Lahari Lanka', course: 'Law/Forensic Science', grade: null },
-            { name: 'Lahari Lanka', course: 'Law/Forensic Science', grade: null },
-            { name: 'Rati Tanvi Shiddalinganagoud', course: 'Medicine', grade: 'UG 1st' },
-            { name: 'Rati Tanvi Shiddalinganagoud', course: 'Aviation', grade: 'UG 1st' },
-            { name: 'Sadhana Chebolu', course: 'LAW', grade: 10 },
-            { name: 'Harrison Max Huang', course: 'LAW', grade: 11 },
-            { name: 'Harrison Max Huang', course: 'Engineering', grade: 11 },
-            { name: 'Abhijit Thunaiselvam', course: 'Medicine', grade: 10 },
-            { name: 'Aishwarya Thunaiselvam', course: 'Medicine', grade: 10 },
-            { name: 'Andia Mahmoodinia', course: 'Medicine', grade: 12 },
-            { name: 'Arjun Kiran', course: 'Medicine', grade: 12 },
-            { name: 'Mahathi Rajkumar', course: 'Medicine', grade: 11 },
-            { name: 'Niveda Banerjee', course: 'Medicine', grade: 12 },
-            { name: 'Sri Skanda Hemmanur', course: 'Medicine', grade: 10 },
-            { name: 'Sai Vaishnavi kalam', course: 'Medicine', grade: 12 },
-            { name: 'Sanjana Ruth Bondada', course: 'Medicine', grade: 11 }
+            { name: 'Rishitha', course: 'Engineering', grade: 12, status: 'active' },
+            { name: 'Utkarsh Mahajan', course: 'Business', grade: 12, status: 'ready_to_start' },
+            { name: 'Aditya Soorya Manukonda', course: 'Engineering', grade: 11, status: 'preparatory' },
+            { name: 'Anish', course: 'Engineering', grade: 11, status: 'active' },
+            { name: 'Diya Anne', course: 'Engineering', grade: 12, status: 'on_vacation' },
+            { name: 'Ishan', course: 'Engineering', grade: 11, status: 'ready_to_start' },
+            { name: 'Agastyaram Lanka', course: 'Engineering', grade: 10, status: 'preparatory' },
+            { name: 'Raeyaan Muppaneni', course: 'Engineering', grade: 10, status: 'active' },
+            { name: 'Raeyaan Muppaneni', course: 'Business', grade: 10, status: 'active' },
+            { name: 'Rishon Valleru Muppaneni', course: 'Engineering', grade: 11, status: 'ready_to_start' },
+            { name: 'Rishon Valleru Muppaneni', course: 'Business', grade: 11, status: 'ready_to_start' },
+            { name: 'Rushil', course: 'Engineering', grade: 'UG 1st', status: 'active' },
+            { name: 'Rushil', course: 'Business', grade: 'UG 1st', status: 'active' },
+            { name: 'Lahari Lanka', course: 'Law/Forensic Science', grade: null, status: 'preparatory' },
+            { name: 'Lahari Lanka', course: 'Law/Forensic Science', grade: null, status: 'preparatory' },
+            { name: 'Rati Tanvi Shiddalinganagoud', course: 'Medicine', grade: 'UG 1st', status: 'on_vacation' },
+            { name: 'Rati Tanvi Shiddalinganagoud', course: 'Aviation', grade: 'UG 1st', status: 'on_vacation' },
+            { name: 'Sadhana Chebolu', course: 'LAW', grade: 10, status: 'active' },
+            { name: 'Harrison Max Huang', course: 'LAW', grade: 11, status: 'ready_to_start' },
+            { name: 'Harrison Max Huang', course: 'Engineering', grade: 11, status: 'ready_to_start' },
+            { name: 'Abhijit Thunaiselvam', course: 'Medicine', grade: 10, status: 'preparatory' },
+            { name: 'Aishwarya Thunaiselvam', course: 'Medicine', grade: 10, status: 'preparatory' },
+            { name: 'Andia Mahmoodinia', course: 'Medicine', grade: 12, status: 'active' },
+            { name: 'Arjun Kiran', course: 'Medicine', grade: 12, status: 'active' },
+            { name: 'Mahathi Rajkumar', course: 'Medicine', grade: 11, status: 'ready_to_start' },
+            { name: 'Niveda Banerjee', course: 'Medicine', grade: 12, status: 'on_vacation' },
+            { name: 'Sri Skanda Hemmanur', course: 'Medicine', grade: 10, status: 'preparatory' },
+            { name: 'Sai Vaishnavi kalam', course: 'Medicine', grade: 12, status: 'active' },
+            { name: 'Sanjana Ruth Bondada', course: 'Medicine', grade: 11, status: 'ready_to_start' }
+        ];
+
+        // Teachers data extracted from schedule
+        const teachers = [
+            { name: 'Mark', subjects: ['AP Spanish', 'US History/Govt'], department: 'Languages & History' },
+            { name: 'Jair Orelena', subjects: ['Linear Algebra', 'Multivariable Calculus'], department: 'Mathematics' },
+            { name: 'Steve', subjects: ['AP English', 'Entrepreneurship'], department: 'English & Business' },
+            { name: 'Amirthaganessan', subjects: ['AP Chemistry', 'Organic Chemistry', 'Biochemistry'], department: 'Chemistry' },
+            { name: 'G Madhuri', subjects: ['AP Seminar', 'AP Research', 'Biostatistics'], department: 'Research & Statistics' },
+            { name: 'Neela Srinivas', subjects: ['Medical Terminology', 'Human Anatomy and Physiology', 'Public Health'], department: 'Medical Sciences' },
+            { name: 'Karthikeyan', subjects: ['Data Science'], department: 'Computer Science' },
+            { name: 'Abby', subjects: ['AP Biology', 'Neurobiology', 'Microbiology'], department: 'Biology' },
+            { name: 'Ambedkar', subjects: ['AI Course', 'Human Resources Management'], department: 'Technology & Management' },
+            { name: 'Swaminathan', subjects: ['Quantum Mechanics', 'Physics'], department: 'Physics' },
+            { name: 'G.Singaravelu', subjects: ['AP Psychology', 'Principles of Management'], department: 'Psychology & Management' }
         ];
 
         const subjectMappings = {
@@ -595,6 +725,26 @@
                 'Human Resources Management': 'bg-gradient-to-br from-orange-100 to-orange-200 border-orange-300 text-orange-800'
             };
             return colors[courseName] || 'bg-gradient-to-br from-gray-100 to-gray-200 border-gray-300 text-gray-800';
+        }
+
+        function getStatusColor(status) {
+            const statusColors = {
+                'on_vacation': 'bg-yellow-100 text-yellow-800 border-yellow-200',
+                'ready_to_start': 'bg-green-100 text-green-800 border-green-200',
+                'preparatory': 'bg-blue-100 text-blue-800 border-blue-200',
+                'active': 'bg-gray-100 text-gray-800 border-gray-200'
+            };
+            return statusColors[status] || statusColors['active'];
+        }
+
+        function getStatusDisplayName(status) {
+            const statusNames = {
+                'on_vacation': 'On Vacation',
+                'ready_to_start': 'Ready to Start',
+                'preparatory': 'Preparatory',
+                'active': 'Active'
+            };
+            return statusNames[status] || 'Active';
         }
 
         function getStreamAbbreviation(course) {
@@ -735,8 +885,8 @@
             });
         }
 
-        function renderStudentView() {
-            const container = document.getElementById('studentView');
+        function renderCourseView() {
+            const container = document.getElementById('courseView');
             container.innerHTML = '';
 
             Object.entries(subjectMappings).forEach(([course, subjects]) => {
@@ -799,6 +949,151 @@
             });
         }
 
+        function renderStudentView() {
+            const container = document.getElementById('studentView');
+            container.innerHTML = '';
+
+            // Get unique students
+            const uniqueStudents = getUniqueStudents(students);
+
+            uniqueStudents.forEach(student => {
+                const studentCard = document.createElement('div');
+                studentCard.className = 'glass-effect rounded-2xl shadow-xl p-8 hover:shadow-2xl transition-all duration-300 cursor-pointer';
+                studentCard.onclick = () => openStudentModal(student.name);
+                
+                // Get enrolled courses for this student
+                const enrolledCourses = students.filter(s => s.name === student.name).map(s => s.course);
+                const uniqueCourses = [...new Set(enrolledCourses)];
+                
+                // Get unique subjects across all courses
+                const allSubjects = new Set();
+                uniqueCourses.forEach(course => {
+                    const courseKey = course === 'LAW' ? 'Law/Forensic Science' : course;
+                    if (subjectMappings[courseKey]) {
+                        subjectMappings[courseKey].forEach(subject => allSubjects.add(subject));
+                    }
+                });
+                
+                studentCard.innerHTML = `
+                    <div class="text-center mb-6">
+                        <h3 class="text-2xl font-bold gradient-text mb-2">${student.name}</h3>
+                        <div class="w-16 h-1 bg-gradient-to-r from-purple-500 to-pink-500 mx-auto rounded-full"></div>
+                    </div>
+                    
+                    <div class="mb-6">
+                        <div class="flex items-center justify-between mb-4">
+                            <h4 class="font-semibold text-gray-800 flex items-center gap-2">
+                                📊 Status
+                            </h4>
+                            <span class="px-3 py-1 rounded-full text-sm font-medium ${getStatusColor(student.status)}">
+                                ${getStatusDisplayName(student.status)}
+                            </span>
+                        </div>
+                        <div class="text-sm text-gray-600">
+                            Grade: ${student.grade ? `Grade ${student.grade}` : 'N/A'}
+                        </div>
+                    </div>
+                    
+                    <div class="mb-6">
+                        <div class="flex items-center justify-between mb-4">
+                            <h4 class="font-semibold text-gray-800 flex items-center gap-2">
+                                📚 Courses
+                            </h4>
+                            <span class="bg-blue-100 text-blue-800 px-3 py-1 rounded-full text-sm font-medium">
+                                ${uniqueCourses.length}
+                            </span>
+                        </div>
+                        <div class="flex flex-wrap gap-2">
+                            ${uniqueCourses.map(course => `
+                                <div class="course-badge text-xs text-gray-600 bg-blue-50 px-3 py-2 rounded-lg border border-blue-200">
+                                    ${course}
+                                </div>
+                            `).join('')}
+                        </div>
+                    </div>
+                    
+                    <div>
+                        <div class="flex items-center justify-between mb-4">
+                            <h4 class="font-semibold text-gray-800 flex items-center gap-2">
+                                📖 Subjects
+                            </h4>
+                            <span class="bg-green-100 text-green-800 px-3 py-1 rounded-full text-sm font-medium">
+                                ${allSubjects.size}
+                            </span>
+                        </div>
+                        <div class="text-sm text-gray-500">
+                            Click to view all subjects and edit status
+                        </div>
+                    </div>
+                `;
+                
+                container.appendChild(studentCard);
+            });
+        }
+
+        function renderTeacherView() {
+            const container = document.getElementById('teacherView');
+            container.innerHTML = '';
+
+            teachers.forEach(teacher => {
+                // Get students taught by this teacher
+                const teacherStudents = [];
+                teacher.subjects.forEach(subject => {
+                    const studentsForSubject = getStudentsForClass(subject);
+                    studentsForSubject.forEach(student => {
+                        if (!teacherStudents.find(s => s.name === student.name)) {
+                            teacherStudents.push(student);
+                        }
+                    });
+                });
+
+                const teacherCard = document.createElement('div');
+                teacherCard.className = 'glass-effect rounded-2xl shadow-xl p-8 hover:shadow-2xl transition-all duration-300 cursor-pointer';
+                teacherCard.onclick = () => openTeacherModal(teacher.name);
+                
+                teacherCard.innerHTML = `
+                    <div class="text-center mb-6">
+                        <h3 class="text-2xl font-bold gradient-text mb-2">${teacher.name}</h3>
+                        <div class="w-16 h-1 bg-gradient-to-r from-green-500 to-teal-500 mx-auto rounded-full"></div>
+                    </div>
+                    
+                    <div class="mb-6">
+                        <div class="flex items-center justify-between mb-4">
+                            <h4 class="font-semibold text-gray-800 flex items-center gap-2">
+                                📚 Subjects
+                            </h4>
+                            <span class="bg-green-100 text-green-800 px-3 py-1 rounded-full text-sm font-medium">
+                                ${teacher.subjects.length}
+                            </span>
+                        </div>
+                        <div class="flex flex-wrap gap-2">
+                            ${teacher.subjects.map(subject => `
+                                <div class="course-badge text-xs text-gray-600 bg-green-50 px-3 py-2 rounded-lg border border-green-200">
+                                    ${subject}
+                                </div>
+                            `).join('')}
+                        </div>
+                    </div>
+                    
+                    <div class="mb-6">
+                        <div class="flex items-center justify-between mb-4">
+                            <h4 class="font-semibold text-gray-800 flex items-center gap-2">
+                                👥 Students
+                            </h4>
+                            <span class="bg-blue-100 text-blue-800 px-3 py-1 rounded-full text-sm font-medium">
+                                ${teacherStudents.length}
+                            </span>
+                        </div>
+                        <div class="text-sm text-gray-600">
+                            ${teacher.department}
+                        </div>
+                    </div>
+                `;
+                
+                container.appendChild(teacherCard);
+            });
+        }
+
         function openModal(classInfo) {
             const modal = document.getElementById('classModal');
             const modalTitle = document.getElementById('modalTitle');
@@ -845,6 +1140,157 @@
             modal.classList.remove('show');
         }
 
+        function openStudentModal(studentName) {
+            const modal = document.getElementById('studentModal');
+            const modalTitle = document.getElementById('studentModalTitle');
+            const modalStatus = document.getElementById('studentModalStatus');
+            const modalCourses = document.getElementById('studentModalCourses');
+            const modalSubjects = document.getElementById('studentModalSubjects');
+            const statusSelect = document.getElementById('studentStatusSelect');
+
+            // Find the student
+            const student = students.find(s => s.name === studentName);
+            if (!student) return;
+
+            modalTitle.textContent = studentName;
+            
+            // Set status
+            modalStatus.innerHTML = `
+                <span class="font-semibold">Status:</span>
+                <span class="px-3 py-1 rounded-full text-sm font-medium ${getStatusColor(student.status)}">
+                    ${getStatusDisplayName(student.status)}
+                </span>
+            `;
+            
+            // Set status select value
+            statusSelect.value = student.status;
+            
+            // Get enrolled courses
+            const enrolledCourses = students.filter(s => s.name === studentName).map(s => s.course);
+            const uniqueCourses = [...new Set(enrolledCourses)];
+            
+            modalCourses.innerHTML = uniqueCourses.map(course => `
+                <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                    <span class="font-medium text-gray-800">${course}</span>
+                    <span class="text-sm text-gray-500">${getStreamAbbreviation(course)}</span>
+                </div>
+            `).join('');
+            
+            // Get unique subjects across all courses
+            const allSubjects = new Set();
+            uniqueCourses.forEach(course => {
+                const courseKey = course === 'LAW' ? 'Law/Forensic Science' : course;
+                if (subjectMappings[courseKey]) {
+                    subjectMappings[courseKey].forEach(subject => allSubjects.add(subject));
+                }
+            });
+            
+            modalSubjects.innerHTML = Array.from(allSubjects).map(subject => `
+                <div class="flex items-center justify-between p-3 bg-blue-50 rounded-lg">
+                    <span class="font-medium text-gray-800">${subject}</span>
+                    <span class="text-sm text-gray-500">${uniqueCourses.map(course => getStreamAbbreviation(course)).join(', ')}</span>
+                </div>
+            `).join('');
+            
+            // Set up status update handler
+            document.getElementById('updateStudentStatus').onclick = () => {
+                const newStatus = statusSelect.value;
+                // Update all instances of this student
+                students.forEach(s => {
+                    if (s.name === studentName) {
+                        s.status = newStatus;
+                    }
+                });
+                // Re-render views
+                renderStudentView();
+                renderSchedule();
+                renderDetailedView();
+                // Update modal status display
+                modalStatus.innerHTML = `
+                    <span class="font-semibold">Status:</span>
+                    <span class="px-3 py-1 rounded-full text-sm font-medium ${getStatusColor(newStatus)}">
+                        ${getStatusDisplayName(newStatus)}
+                    </span>
+                `;
+            };
+            
+            modal.classList.add('show');
+        }
+
+        function closeStudentModal() {
+            const modal = document.getElementById('studentModal');
+            modal.classList.remove('show');
+        }
+
+        function openTeacherModal(teacherName) {
+            const modal = document.getElementById('teacherModal');
+            const modalTitle = document.getElementById('teacherModalTitle');
+            const modalInfo = document.getElementById('teacherModalInfo');
+            const modalSubjects = document.getElementById('teacherModalSubjects');
+            const modalStudents = document.getElementById('teacherModalStudents');
+            const modalSchedule = document.getElementById('teacherModalSchedule');
+
+            // Find the teacher
+            const teacher = teachers.find(t => t.name === teacherName);
+            if (!teacher) return;
+
+            modalTitle.textContent = teacherName;
+            
+            // Set teacher info
+            modalInfo.innerHTML = `
+                <span class="font-semibold">Department:</span>
+                <span class="text-gray-800">${teacher.department}</span>
+            `;
+            
+            // Set subjects
+            modalSubjects.innerHTML = teacher.subjects.map(subject => `
+                <div class="flex items-center justify-between p-3 bg-green-50 rounded-lg">
+                    <span class="font-medium text-gray-800">${subject}</span>
+                </div>
+            `).join('');
+            
+            // Get students taught by this teacher
+            const teacherStudents = [];
+            teacher.subjects.forEach(subject => {
+                const studentsForSubject = getStudentsForClass(subject);
+                studentsForSubject.forEach(student => {
+                    if (!teacherStudents.find(s => s.name === student.name)) {
+                        teacherStudents.push(student);
+                    }
+                });
+            });
+            
+            modalStudents.innerHTML = teacherStudents.map(student => `
+                <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                    <div>
+                        <span class="font-medium text-gray-800">${student.name}</span>
+                        <div class="text-sm text-gray-500">${student.course}</div>
+                    </div>
+                    <span class="text-sm text-gray-500">${student.grade ? `Grade ${student.grade}` : 'N/A'}</span>
+                </div>
+            `).join('');
+            
+            // Get teacher's schedule
+            const teacherSchedule = schedule.filter(cls => cls.professor === teacherName);
+            
+            modalSchedule.innerHTML = teacherSchedule.map(cls => `
+                <div class="flex items-center justify-between p-3 bg-blue-50 rounded-lg">
+                    <div>
+                        <span class="font-medium text-gray-800">${cls.course}</span>
+                        <div class="text-sm text-gray-500">${cls.day}</div>
+                    </div>
+                    <span class="text-sm text-gray-500">${cls.startTime} - ${cls.endTime}</span>
+                </div>
+            `).join('');
+            
+            modal.classList.add('show');
+        }
+
+        function closeTeacherModal() {
+            const modal = document.getElementById('teacherModal');
+            modal.classList.remove('show');
+        }
+
         function scrollToTop() {
             window.scrollTo({ top: 0, behavior: 'smooth' });
         }
@@ -864,38 +1310,92 @@
         document.getElementById('scheduleBtn').addEventListener('click', () => {
             document.getElementById('scheduleView').style.display = 'block';
             document.getElementById('detailedView').style.display = 'none';
+            document.getElementById('courseView').style.display = 'none';
             document.getElementById('studentView').style.display = 'none';
+            document.getElementById('teacherView').style.display = 'none';
             document.getElementById('scheduleBtn').className = 'btn-primary px-8 py-3 rounded-xl font-semibold flex items-center gap-3 text-white shadow-lg';
             document.getElementById('detailedBtn').className = 'btn-secondary px-8 py-3 rounded-xl font-semibold flex items-center gap-3 text-gray-700';
+            document.getElementById('coursesBtn').className = 'btn-secondary px-8 py-3 rounded-xl font-semibold flex items-center gap-3 text-gray-700';
             document.getElementById('studentsBtn').className = 'btn-secondary px-8 py-3 rounded-xl font-semibold flex items-center gap-3 text-gray-700';
+            document.getElementById('teachersBtn').className = 'btn-secondary px-8 py-3 rounded-xl font-semibold flex items-center gap-3 text-gray-700';
             updateCurrentView('schedule');
         });
 
         document.getElementById('detailedBtn').addEventListener('click', () => {
             document.getElementById('scheduleView').style.display = 'none';
             document.getElementById('detailedView').style.display = 'block';
+            document.getElementById('courseView').style.display = 'none';
             document.getElementById('studentView').style.display = 'none';
+            document.getElementById('teacherView').style.display = 'none';
             document.getElementById('scheduleBtn').className = 'btn-secondary px-8 py-3 rounded-xl font-semibold flex items-center gap-3 text-gray-700';
             document.getElementById('detailedBtn').className = 'btn-primary px-8 py-3 rounded-xl font-semibold flex items-center gap-3 text-white shadow-lg';
+            document.getElementById('coursesBtn').className = 'btn-secondary px-8 py-3 rounded-xl font-semibold flex items-center gap-3 text-gray-700';
             document.getElementById('studentsBtn').className = 'btn-secondary px-8 py-3 rounded-xl font-semibold flex items-center gap-3 text-gray-700';
+            document.getElementById('teachersBtn').className = 'btn-secondary px-8 py-3 rounded-xl font-semibold flex items-center gap-3 text-gray-700';
             updateCurrentView('detailed');
+        });
+
+        document.getElementById('coursesBtn').addEventListener('click', () => {
+            document.getElementById('scheduleView').style.display = 'none';
+            document.getElementById('detailedView').style.display = 'none';
+            document.getElementById('courseView').style.display = 'grid';
+            document.getElementById('studentView').style.display = 'none';
+            document.getElementById('teacherView').style.display = 'none';
+            document.getElementById('scheduleBtn').className = 'btn-secondary px-8 py-3 rounded-xl font-semibold flex items-center gap-3 text-gray-700';
+            document.getElementById('detailedBtn').className = 'btn-secondary px-8 py-3 rounded-xl font-semibold flex items-center gap-3 text-gray-700';
+            document.getElementById('coursesBtn').className = 'btn-primary px-8 py-3 rounded-xl font-semibold flex items-center gap-3 text-white shadow-lg';
+            document.getElementById('studentsBtn').className = 'btn-secondary px-8 py-3 rounded-xl font-semibold flex items-center gap-3 text-gray-700';
+            document.getElementById('teachersBtn').className = 'btn-secondary px-8 py-3 rounded-xl font-semibold flex items-center gap-3 text-gray-700';
+            updateCurrentView('courses');
         });
 
         document.getElementById('studentsBtn').addEventListener('click', () => {
             document.getElementById('scheduleView').style.display = 'none';
             document.getElementById('detailedView').style.display = 'none';
+            document.getElementById('courseView').style.display = 'none';
             document.getElementById('studentView').style.display = 'grid';
+            document.getElementById('teacherView').style.display = 'none';
             document.getElementById('scheduleBtn').className = 'btn-secondary px-8 py-3 rounded-xl font-semibold flex items-center gap-3 text-gray-700';
             document.getElementById('detailedBtn').className = 'btn-secondary px-8 py-3 rounded-xl font-semibold flex items-center gap-3 text-gray-700';
+            document.getElementById('coursesBtn').className = 'btn-secondary px-8 py-3 rounded-xl font-semibold flex items-center gap-3 text-gray-700';
             document.getElementById('studentsBtn').className = 'btn-primary px-8 py-3 rounded-xl font-semibold flex items-center gap-3 text-white shadow-lg';
+            document.getElementById('teachersBtn').className = 'btn-secondary px-8 py-3 rounded-xl font-semibold flex items-center gap-3 text-gray-700';
             updateCurrentView('students');
         });
 
+        document.getElementById('teachersBtn').addEventListener('click', () => {
+            document.getElementById('scheduleView').style.display = 'none';
+            document.getElementById('detailedView').style.display = 'none';
+            document.getElementById('courseView').style.display = 'none';
+            document.getElementById('studentView').style.display = 'none';
+            document.getElementById('teacherView').style.display = 'grid';
+            document.getElementById('scheduleBtn').className = 'btn-secondary px-8 py-3 rounded-xl font-semibold flex items-center gap-3 text-gray-700';
+            document.getElementById('detailedBtn').className = 'btn-secondary px-8 py-3 rounded-xl font-semibold flex items-center gap-3 text-gray-700';
+            document.getElementById('coursesBtn').className = 'btn-secondary px-8 py-3 rounded-xl font-semibold flex items-center gap-3 text-gray-700';
+            document.getElementById('studentsBtn').className = 'btn-secondary px-8 py-3 rounded-xl font-semibold flex items-center gap-3 text-gray-700';
+            document.getElementById('teachersBtn').className = 'btn-primary px-8 py-3 rounded-xl font-semibold flex items-center gap-3 text-white shadow-lg';
+            updateCurrentView('teachers');
+        });
+
         document.getElementById('closeModal').addEventListener('click', closeModal);
+        document.getElementById('closeStudentModal').addEventListener('click', closeStudentModal);
+        document.getElementById('closeTeacherModal').addEventListener('click', closeTeacherModal);
         
         document.getElementById('classModal').addEventListener('click', (e) => {
             if (e.target === document.getElementById('classModal')) {
                 closeModal();
+            }
+        });
+
+        document.getElementById('studentModal').addEventListener('click', (e) => {
+            if (e.target === document.getElementById('studentModal')) {
+                closeStudentModal();
+            }
+        });
+
+        document.getElementById('teacherModal').addEventListener('click', (e) => {
+            if (e.target === document.getElementById('teacherModal')) {
+                closeTeacherModal();
             }
         });
 
@@ -1091,7 +1591,9 @@
         updateStats();
         renderSchedule();
         renderDetailedView();
+        renderCourseView();
         renderStudentView();
+        renderTeacherView();
         
         // Initialize progressive scrolling after a short delay to ensure DOM is ready
         setTimeout(initializeProgressiveScrolling, 500);
