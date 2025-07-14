@@ -397,7 +397,7 @@
                 <table class="w-full timetable">
                     <thead class="sticky-header text-white">
                         <tr>
-                            <th class="px-6 py-4 text-left font-semibold text-lg header-cell time-cell-enhanced">
+                            <th class="px-6 py-4 text-left font-semibold text-lg header-cell time-cell-enhanced align-top">
                                 🕐 Time
                             </th>
                             <th class="px-4 py-4 text-center font-semibold min-w-[280px] header-cell">Monday</th>
@@ -574,126 +574,75 @@
         </div>
     </div>
 
-    <script>
-        // Data
-        const students = [
-            { name: 'Rishitha', course: 'Engineering', grade: 12, status: 'active' },
-            { name: 'Utkarsh Mahajan', course: 'Business', grade: 12, status: 'ready_to_start' },
-            { name: 'Aditya Soorya Manukonda', course: 'Engineering', grade: 11, status: 'preparatory' },
-            { name: 'Anish', course: 'Engineering', grade: 11, status: 'active' },
-            { name: 'Diya Anne', course: 'Engineering', grade: 12, status: 'on_vacation' },
-            { name: 'Ishan', course: 'Engineering', grade: 11, status: 'ready_to_start' },
-            { name: 'Agastyaram Lanka', course: 'Engineering', grade: 10, status: 'preparatory' },
-            { name: 'Raeyaan Muppaneni', course: 'Engineering', grade: 10, status: 'active' },
-            { name: 'Raeyaan Muppaneni', course: 'Business', grade: 10, status: 'active' },
-            { name: 'Rishon Valleru Muppaneni', course: 'Engineering', grade: 11, status: 'ready_to_start' },
-            { name: 'Rishon Valleru Muppaneni', course: 'Business', grade: 11, status: 'ready_to_start' },
-            { name: 'Rushil', course: 'Engineering', grade: 'UG 1st', status: 'active' },
-            { name: 'Rushil', course: 'Business', grade: 'UG 1st', status: 'active' },
-            { name: 'Lahari Lanka', course: 'Law/Forensic Science', grade: null, status: 'preparatory' },
-            { name: 'Lahari Lanka', course: 'Law/Forensic Science', grade: null, status: 'preparatory' },
-            { name: 'Rati Tanvi Shiddalinganagoud', course: 'Medicine', grade: 'UG 1st', status: 'on_vacation' },
-            { name: 'Rati Tanvi Shiddalinganagoud', course: 'Aviation', grade: 'UG 1st', status: 'on_vacation' },
-            { name: 'Sadhana Chebolu', course: 'LAW', grade: 10, status: 'active' },
-            { name: 'Harrison Max Huang', course: 'LAW', grade: 11, status: 'ready_to_start' },
-            { name: 'Harrison Max Huang', course: 'Engineering', grade: 11, status: 'ready_to_start' },
-            { name: 'Abhijit Thunaiselvam', course: 'Medicine', grade: 10, status: 'preparatory' },
-            { name: 'Aishwarya Thunaiselvam', course: 'Medicine', grade: 10, status: 'preparatory' },
-            { name: 'Andia Mahmoodinia', course: 'Medicine', grade: 12, status: 'active' },
-            { name: 'Arjun Kiran', course: 'Medicine', grade: 12, status: 'active' },
-            { name: 'Mahathi Rajkumar', course: 'Medicine', grade: 11, status: 'ready_to_start' },
-            { name: 'Niveda Banerjee', course: 'Medicine', grade: 12, status: 'on_vacation' },
-            { name: 'Sri Skanda Hemmanur', course: 'Medicine', grade: 10, status: 'preparatory' },
-            { name: 'Sai Vaishnavi kalam', course: 'Medicine', grade: 12, status: 'active' },
-            { name: 'Sanjana Ruth Bondada', course: 'Medicine', grade: 11, status: 'ready_to_start' }
-        ];
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm"></script>
 
-        // Teachers data extracted from schedule
-        const teachers = [
-            { name: 'Mark', subjects: ['AP Spanish', 'US History/Govt'], department: 'Languages & History' },
-            { name: 'Jair Orelena', subjects: ['Linear Algebra', 'Multivariable Calculus'], department: 'Mathematics' },
-            { name: 'Steve', subjects: ['AP English', 'Entrepreneurship'], department: 'English & Business' },
-            { name: 'Amirthaganessan', subjects: ['AP Chemistry', 'Organic Chemistry', 'Biochemistry'], department: 'Chemistry' },
-            { name: 'G Madhuri', subjects: ['AP Seminar', 'AP Research', 'Biostatistics'], department: 'Research & Statistics' },
-            { name: 'Neela Srinivas', subjects: ['Medical Terminology', 'Human Anatomy and Physiology', 'Public Health'], department: 'Medical Sciences' },
-            { name: 'Karthikeyan', subjects: ['Data Science'], department: 'Computer Science' },
-            { name: 'Abby', subjects: ['AP Biology', 'Neurobiology', 'Microbiology'], department: 'Biology' },
-            { name: 'Ambedkar', subjects: ['AI Course', 'Human Resources Management'], department: 'Technology & Management' },
-            { name: 'Swaminathan', subjects: ['Quantum Mechanics', 'Physics'], department: 'Physics' },
-            { name: 'G.Singaravelu', subjects: ['AP Psychology', 'Principles of Management'], department: 'Psychology & Management' }
-        ];
+    <script type="module">
+        // Supabase initialization
+        const supabaseUrl = 'https://mobotuypivjzrnrcmuhq.supabase.co'; // <-- Replace with your Supabase URL
+        const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im1vYm90dXlwaXZqenJucmNtdWhxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTI0NTg1MzYsImV4cCI6MjA2ODAzNDUzNn0.m8WYNG_maJlW42gF1K2Er64O0o6wPx-tKxpc7EKWW64'; // <-- Replace with your anon key
+        const supabase = window.supabase.createClient(supabaseUrl, supabaseKey);
 
-        const subjectMappings = {
-            'Engineering': ['AP Chemistry', 'AP Biology', 'AP Spanish', 'AP Seminar', 'AP Research', 'AI Course', 'Linear Algebra', 'Multivariable Calculus', 'Quantum Mechanics', 'Data Science', 'Entrepreneurship', 'AP Psychology'],
-            'Medicine': ['AP Biology', 'Medical Terminology', 'Organic Chemistry', 'Human Anatomy and Physiology', 'Biochemistry', 'Psychology', 'Neuroscience', 'Biostatistics', 'Microbiology'],
-            'Law/Forensic Science': ['AP Spanish', 'AP Seminar', 'AP Research', 'Entrepreneurship', 'AP Psychology', 'Principles of Management', 'Human Resources Management'],
-            'Business': ['AP Spanish', 'AP Seminar', 'AP Research', 'Entrepreneurship', 'AP Psychology', 'Principles of Management', 'Human Resources Management'],
-            'Aviation': ['Physics', 'AP Seminar', 'AP English', 'US History/Govt', 'AP Spanish', 'Entrepreneurship'],
-        };
+        // Data holders
+        let students = [];
+        let teachers = [];
+        let courses = [];
+        let subjects = [];
+        let schedule = [];
+        let studentCourses = [];
+        let studentSubjects = [];
+        let teacherSubjects = [];
+        let teacherStudents = [];
 
-        const schedule = [
-            { course: 'AP Spanish', day: 'Monday', startTime: '10:00 AM', endTime: '11:00 AM', professor: 'Mark' },
-            { course: 'US History/Govt', day: 'Monday', startTime: '11:00 AM', endTime: '12:00 PM', professor: 'Mark' },
-            { course: 'Linear Algebra', day: 'Monday', startTime: '1:00 PM', endTime: '2:00 PM', professor: 'Jair Orelena' },
-            { course: 'AP English', day: 'Monday', startTime: '4:00 PM', endTime: '5:00 PM', professor: 'Steve' },
-            { course: 'AP Chemistry', day: 'Monday', startTime: '5:00 PM', endTime: '6:00 PM', professor: 'Amirthaganessan' },
-            { course: 'AP Seminar', day: 'Monday', startTime: '6:00 PM', endTime: '7:00 PM', professor: 'G Madhuri' },
-            { course: 'Medical Terminology', day: 'Monday', startTime: '7:00 PM', endTime: '8:00 PM', professor: 'Neela Srinivas' },
-            { course: 'Multivariable Calculus', day: 'Tuesday', startTime: '1:00 PM', endTime: '2:00 PM', professor: 'Jair Orelena' },
-            { course: 'Organic Chemistry', day: 'Tuesday', startTime: '5:00 PM', endTime: '6:00 PM', professor: 'Amirthaganessan' },
-            { course: 'AP Research', day: 'Tuesday', startTime: '6:00 PM', endTime: '7:00 PM', professor: 'G Madhuri' },
-            { course: 'Human Anatomy and Physiology', day: 'Tuesday', startTime: '7:00 PM', endTime: '8:00 PM', professor: 'Neela Srinivas' },
-            { course: 'Biochemistry', day: 'Wednesday', startTime: '5:00 PM', endTime: '6:00 PM', professor: 'Amirthaganessan' },
-            { course: 'Biostatistics', day: 'Wednesday', startTime: '6:00 PM', endTime: '7:00 PM', professor: 'G Madhuri' },
-            { course: 'Public Health', day: 'Wednesday', startTime: '7:00 PM', endTime: '8:00 PM', professor: 'Neela Srinivas' },
-            { course: 'Entrepreneurship', day: 'Thursday', startTime: '4:00 PM', endTime: '5:00 PM', professor: 'Steve' },
-            { course: 'Data Science', day: 'Thursday', startTime: '5:00 PM', endTime: '6:00 PM', professor: 'Karthikeyan' },
-            { course: 'AP Biology', day: 'Thursday', startTime: '6:00 PM', endTime: '7:00 PM', professor: 'Abby' },
-            { course: 'AI Course', day: 'Thursday', startTime: '7:00 PM', endTime: '8:00 PM', professor: 'Ambedkar' },
-            { course: 'Quantum Mechanics', day: 'Friday', startTime: '5:00 PM', endTime: '6:00 PM', professor: 'Swaminathan' },
-            { course: 'Neurobiology', day: 'Friday', startTime: '6:00 PM', endTime: '7:00 PM', professor: 'Abby' },
-            { course: 'AP Psychology', day: 'Friday', startTime: '7:00 PM', endTime: '8:00 PM', professor: 'G.Singaravelu' },
-            { course: 'Physics', day: 'Saturday', startTime: '5:00 PM', endTime: '6:00 PM', professor: 'Swaminathan' },
-            { course: 'Microbiology', day: 'Saturday', startTime: '6:00 PM', endTime: '7:00 PM', professor: 'Abby' },
-            { course: 'Principles of Management', day: 'Saturday', startTime: '7:00 PM', endTime: '8:00 PM', professor: 'G.Singaravelu' },
-            { course: 'Human Resources Management', day: 'Sunday', startTime: '3:00 PM', endTime: '4:00 PM', professor: 'Ambedkar' }
-        ];
+        // Fetch all data from Supabase
+        async function fetchAllData() {
+            // Fetch in parallel
+            const [studentsRes, teachersRes, coursesRes, subjectsRes, scheduleRes, studentCoursesRes, studentSubjectsRes, teacherSubjectsRes, teacherStudentsRes] = await Promise.all([
+                supabase.from('students').select('*'),
+                supabase.from('teachers').select('*'),
+                supabase.from('courses').select('*'),
+                supabase.from('subjects').select('*'),
+                supabase.from('schedule').select('*'),
+                supabase.from('student_courses').select('*'),
+                supabase.from('student_subjects').select('*'),
+                supabase.from('teacher_subjects').select('*'),
+                supabase.from('teacher_students').select('*'),
+            ]);
+            students = studentsRes.data || [];
+            teachers = teachersRes.data || [];
+            courses = coursesRes.data || [];
+            subjects = subjectsRes.data || [];
+            schedule = scheduleRes.data || [];
+            studentCourses = studentCoursesRes.data || [];
+            studentSubjects = studentSubjectsRes.data || [];
+            teacherSubjects = teacherSubjectsRes.data || [];
+            teacherStudents = teacherStudentsRes.data || [];
+        }
 
-        const days = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
-        const timeSlots = ['10:00 AM', '11:00 AM', '1:00 PM', '3:00 PM', '4:00 PM', '5:00 PM', '6:00 PM', '7:00 PM'];
-
-        // Helper functions
-        function getStudentsForClass(courseName) {
-            const attendingStudents = [];
-            
-            students.forEach(student => {
-                const studentCourse = student.course === 'LAW' ? 'Law/Forensic Science' : 
-                                    student.course;
-                
-                if (subjectMappings[studentCourse] && subjectMappings[studentCourse].includes(courseName)) {
-                    attendingStudents.push(student);
-                }
-            });
-            
-            return attendingStudents;
+        // Helper: Get students for a subject/course
+        function getStudentsForClass(subjectName) {
+            // Find subject id
+            const subject = subjects.find(s => s.name === subjectName);
+            if (!subject) return [];
+            // Find student ids enrolled in this subject
+            const enrolled = studentSubjects.filter(ss => ss.subject_id === subject.id);
+            return enrolled.map(ss => students.find(stu => stu.id === ss.student_id)).filter(Boolean);
         }
 
         function getUniqueStudents(studentsList) {
-            const uniqueStudents = [];
-            const seenNames = new Set();
-            
-            studentsList.forEach(student => {
-                if (!seenNames.has(student.name)) {
-                    seenNames.add(student.name);
-                    uniqueStudents.push(student);
+            const unique = [];
+            const seen = new Set();
+            studentsList.forEach(s => {
+                if (s && !seen.has(s.name)) {
+                    seen.add(s.name);
+                    unique.push(s);
                 }
             });
-            
-            return uniqueStudents;
+            return unique;
         }
 
         function getClassForTimeSlot(day, timeSlot) {
-            return schedule.find(cls => cls.day === day && cls.startTime === timeSlot);
+            // Find schedule entry for this day and time
+            return schedule.find(cls => cls.day === day && cls.start_time === timeSlot);
         }
 
         function getCourseColor(courseName) {
@@ -780,16 +729,24 @@
                     
                     const classInfo = getClassForTimeSlot(day, timeSlot);
                     if (classInfo) {
+                        const subject = subjects.find(s => s.id === classInfo.subject_id);
+                        const prof = teachers.find(t => t.id === classInfo.professor_id);
                         const classDiv = document.createElement('div');
-                        classDiv.className = `p-4 rounded-xl border-2 cursor-pointer course-card ${getCourseColor(classInfo.course)} shadow-sm`;
-                        classDiv.onclick = () => openModal(classInfo);
+                        classDiv.className = `p-4 rounded-xl border-2 cursor-pointer course-card ${getCourseColor(subject?.name)} shadow-sm`;
+                        classDiv.onclick = () => openModal({
+                            course: subject?.name,
+                            day: classInfo.day,
+                            startTime: classInfo.start_time,
+                            endTime: classInfo.end_time,
+                            professor: prof?.name || 'Unknown',
+                        });
                         
-                        const uniqueStudents = getUniqueStudents(getStudentsForClass(classInfo.course));
+                        const uniqueStudents = getUniqueStudents(getStudentsForClass(subject?.name));
                         
                         classDiv.innerHTML = `
-                            <div class="font-bold text-sm mb-2">${classInfo.course}</div>
+                            <div class="font-bold text-sm mb-2">${subject?.name || '-'}</div>
                             <div class="text-xs opacity-80 mb-2 flex items-center justify-center gap-1">
-                                👤 ${classInfo.professor}
+                                👤 ${prof?.name || '-'}
                             </div>
                             <div class="text-xs opacity-80 flex items-center justify-center gap-1">
                                 👥 ${uniqueStudents.length} students
@@ -829,10 +786,12 @@
                     
                     const classInfo = getClassForTimeSlot(day, timeSlot);
                     if (classInfo) {
+                        const subject = subjects.find(s => s.id === classInfo.subject_id);
+                        const prof = teachers.find(t => t.id === classInfo.professor_id);
                         const classDiv = document.createElement('div');
-                        classDiv.className = `p-4 rounded-xl border-2 ${getCourseColor(classInfo.course)} shadow-sm min-h-[200px]`;
+                        classDiv.className = `p-4 rounded-xl border-2 ${getCourseColor(subject?.name)} shadow-sm min-h-[200px]`;
                         
-                        const uniqueStudents = getUniqueStudents(getStudentsForClass(classInfo.course));
+                        const uniqueStudents = getUniqueStudents(getStudentsForClass(subject?.name));
                         
                         // Group students by course for better organization
                         const studentsByCourse = {};
@@ -857,9 +816,9 @@
                         
                         classDiv.innerHTML = `
                             <div class="mb-3">
-                                <div class="font-bold text-sm mb-2 leading-tight">${classInfo.course}</div>
+                                <div class="font-bold text-sm mb-2 leading-tight">${subject?.name || '-'}</div>
                                 <div class="text-xs opacity-90 mb-2 flex items-center gap-1">
-                                    👤 <span class="font-medium">${classInfo.professor}</span>
+                                    👤 <span class="font-medium">${prof?.name || '-'}</span>
                                 </div>
                                 <div class="text-xs opacity-90 mb-3 flex items-center gap-1">
                                     👥 <span class="font-medium">${uniqueStudents.length} students</span>
@@ -889,209 +848,27 @@
             const container = document.getElementById('courseView');
             container.innerHTML = '';
 
-            Object.entries(subjectMappings).forEach(([course, subjects]) => {
-                const courseStudents = students.filter(student => {
-                    const studentCourse = student.course === 'LAW' ? 'Law/Forensic Science' : 
-                                        student.course;
-                    return studentCourse === course;
-                });
-
-                const courseCard = document.createElement('div');
-                courseCard.className = 'glass-effect rounded-2xl shadow-xl p-8 hover:shadow-2xl transition-all duration-300';
-                
-                const uniqueStudents = getUniqueStudents(courseStudents);
-                
-                courseCard.innerHTML = `
-                    <div class="text-center mb-6">
-                        <h3 class="text-2xl font-bold gradient-text mb-2">${course}</h3>
-                        <div class="w-16 h-1 bg-gradient-to-r from-blue-500 to-purple-500 mx-auto rounded-full"></div>
-                    </div>
-                    
-                    <div class="mb-6">
-                        <div class="flex items-center justify-between mb-4">
-                            <h4 class="font-semibold text-gray-800 flex items-center gap-2">
-                                👥 Students
-                            </h4>
-                            <span class="bg-blue-100 text-blue-800 px-3 py-1 rounded-full text-sm font-medium">
-                                ${uniqueStudents.length}
-                            </span>
-                        </div>
-                        <div class="space-y-2 max-h-48 overflow-y-auto">
-                            ${uniqueStudents.map(student => `
-                                <div class="student-card text-sm text-gray-700 bg-gray-50 px-4 py-3 rounded-lg flex justify-between items-center">
-                                    <span class="font-medium">${student.name}</span>
-                                    <span class="text-xs text-gray-500">${student.grade ? `Grade ${student.grade}` : 'N/A'}</span>
-                                </div>
-                            `).join('')}
-                        </div>
-                    </div>
-                    
-                    <div>
-                        <div class="flex items-center justify-between mb-4">
-                            <h4 class="font-semibold text-gray-800 flex items-center gap-2">
-                                📚 Subjects
-                            </h4>
-                            <span class="bg-green-100 text-green-800 px-3 py-1 rounded-full text-sm font-medium">
-                                ${subjects.length}
-                            </span>
-                        </div>
-                        <div class="flex flex-wrap gap-2">
-                            ${subjects.map(subject => `
-                                <div class="course-badge text-xs text-gray-600 bg-blue-50 px-3 py-2 rounded-lg border border-blue-200">
-                                    ${subject}
-                                </div>
-                            `).join('')}
-                        </div>
-                    </div>
-                `;
-                
-                container.appendChild(courseCard);
-            });
+            // This function will need to be updated to fetch data from Supabase
+            // For now, it will render an empty grid.
+            container.innerHTML = '<div class="text-center py-16 text-gray-500">Loading Courses...</div>';
         }
 
         function renderStudentView() {
             const container = document.getElementById('studentView');
             container.innerHTML = '';
 
-            // Get unique students
-            const uniqueStudents = getUniqueStudents(students);
-
-            uniqueStudents.forEach(student => {
-                const studentCard = document.createElement('div');
-                studentCard.className = 'glass-effect rounded-2xl shadow-xl p-8 hover:shadow-2xl transition-all duration-300 cursor-pointer';
-                studentCard.onclick = () => openStudentModal(student.name);
-                
-                // Get enrolled courses for this student
-                const enrolledCourses = students.filter(s => s.name === student.name).map(s => s.course);
-                const uniqueCourses = [...new Set(enrolledCourses)];
-                
-                // Get unique subjects across all courses
-                const allSubjects = new Set();
-                uniqueCourses.forEach(course => {
-                    const courseKey = course === 'LAW' ? 'Law/Forensic Science' : course;
-                    if (subjectMappings[courseKey]) {
-                        subjectMappings[courseKey].forEach(subject => allSubjects.add(subject));
-                    }
-                });
-                
-                studentCard.innerHTML = `
-                    <div class="text-center mb-6">
-                        <h3 class="text-2xl font-bold gradient-text mb-2">${student.name}</h3>
-                        <div class="w-16 h-1 bg-gradient-to-r from-purple-500 to-pink-500 mx-auto rounded-full"></div>
-                    </div>
-                    
-                    <div class="mb-6">
-                        <div class="flex items-center justify-between mb-4">
-                            <h4 class="font-semibold text-gray-800 flex items-center gap-2">
-                                📊 Status
-                            </h4>
-                            <span class="px-3 py-1 rounded-full text-sm font-medium ${getStatusColor(student.status)}">
-                                ${getStatusDisplayName(student.status)}
-                            </span>
-                        </div>
-                        <div class="text-sm text-gray-600">
-                            Grade: ${student.grade ? `Grade ${student.grade}` : 'N/A'}
-                        </div>
-                    </div>
-                    
-                    <div class="mb-6">
-                        <div class="flex items-center justify-between mb-4">
-                            <h4 class="font-semibold text-gray-800 flex items-center gap-2">
-                                📚 Courses
-                            </h4>
-                            <span class="bg-blue-100 text-blue-800 px-3 py-1 rounded-full text-sm font-medium">
-                                ${uniqueCourses.length}
-                            </span>
-                        </div>
-                        <div class="flex flex-wrap gap-2">
-                            ${uniqueCourses.map(course => `
-                                <div class="course-badge text-xs text-gray-600 bg-blue-50 px-3 py-2 rounded-lg border border-blue-200">
-                                    ${course}
-                                </div>
-                            `).join('')}
-                        </div>
-                    </div>
-                    
-                    <div>
-                        <div class="flex items-center justify-between mb-4">
-                            <h4 class="font-semibold text-gray-800 flex items-center gap-2">
-                                📖 Subjects
-                            </h4>
-                            <span class="bg-green-100 text-green-800 px-3 py-1 rounded-full text-sm font-medium">
-                                ${allSubjects.size}
-                            </span>
-                        </div>
-                        <div class="text-sm text-gray-500">
-                            Click to view all subjects and edit status
-                        </div>
-                    </div>
-                `;
-                
-                container.appendChild(studentCard);
-            });
+            // This function will need to be updated to fetch data from Supabase
+            // For now, it will render an empty grid.
+            container.innerHTML = '<div class="text-center py-16 text-gray-500">Loading Students...</div>';
         }
 
         function renderTeacherView() {
             const container = document.getElementById('teacherView');
             container.innerHTML = '';
 
-            teachers.forEach(teacher => {
-                // Get students taught by this teacher
-                const teacherStudents = [];
-                teacher.subjects.forEach(subject => {
-                    const studentsForSubject = getStudentsForClass(subject);
-                    studentsForSubject.forEach(student => {
-                        if (!teacherStudents.find(s => s.name === student.name)) {
-                            teacherStudents.push(student);
-                        }
-                    });
-                });
-
-                const teacherCard = document.createElement('div');
-                teacherCard.className = 'glass-effect rounded-2xl shadow-xl p-8 hover:shadow-2xl transition-all duration-300 cursor-pointer';
-                teacherCard.onclick = () => openTeacherModal(teacher.name);
-                
-                teacherCard.innerHTML = `
-                    <div class="text-center mb-6">
-                        <h3 class="text-2xl font-bold gradient-text mb-2">${teacher.name}</h3>
-                        <div class="w-16 h-1 bg-gradient-to-r from-green-500 to-teal-500 mx-auto rounded-full"></div>
-                    </div>
-                    
-                    <div class="mb-6">
-                        <div class="flex items-center justify-between mb-4">
-                            <h4 class="font-semibold text-gray-800 flex items-center gap-2">
-                                📚 Subjects
-                            </h4>
-                            <span class="bg-green-100 text-green-800 px-3 py-1 rounded-full text-sm font-medium">
-                                ${teacher.subjects.length}
-                            </span>
-                        </div>
-                        <div class="flex flex-wrap gap-2">
-                            ${teacher.subjects.map(subject => `
-                                <div class="course-badge text-xs text-gray-600 bg-green-50 px-3 py-2 rounded-lg border border-green-200">
-                                    ${subject}
-                                </div>
-                            `).join('')}
-                        </div>
-                    </div>
-                    
-                    <div class="mb-6">
-                        <div class="flex items-center justify-between mb-4">
-                            <h4 class="font-semibold text-gray-800 flex items-center gap-2">
-                                👥 Students
-                            </h4>
-                            <span class="bg-blue-100 text-blue-800 px-3 py-1 rounded-full text-sm font-medium">
-                                ${teacherStudents.length}
-                            </span>
-                        </div>
-                        <div class="text-sm text-gray-600">
-                            ${teacher.department}
-                        </div>
-                    </div>
-                `;
-                
-                container.appendChild(teacherCard);
-            });
+            // This function will need to be updated to fetch data from Supabase
+            // For now, it will render an empty grid.
+            container.innerHTML = '<div class="text-center py-16 text-gray-500">Loading Teachers...</div>';
         }
 
         function openModal(classInfo) {
@@ -1148,72 +925,14 @@
             const modalSubjects = document.getElementById('studentModalSubjects');
             const statusSelect = document.getElementById('studentStatusSelect');
 
-            // Find the student
-            const student = students.find(s => s.name === studentName);
-            if (!student) return;
-
+            // This function will need to be updated to fetch data from Supabase
+            // For now, it will render an empty modal.
             modalTitle.textContent = studentName;
-            
-            // Set status
-            modalStatus.innerHTML = `
-                <span class="font-semibold">Status:</span>
-                <span class="px-3 py-1 rounded-full text-sm font-medium ${getStatusColor(student.status)}">
-                    ${getStatusDisplayName(student.status)}
-                </span>
-            `;
-            
-            // Set status select value
-            statusSelect.value = student.status;
-            
-            // Get enrolled courses
-            const enrolledCourses = students.filter(s => s.name === studentName).map(s => s.course);
-            const uniqueCourses = [...new Set(enrolledCourses)];
-            
-            modalCourses.innerHTML = uniqueCourses.map(course => `
-                <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
-                    <span class="font-medium text-gray-800">${course}</span>
-                    <span class="text-sm text-gray-500">${getStreamAbbreviation(course)}</span>
-                </div>
-            `).join('');
-            
-            // Get unique subjects across all courses
-            const allSubjects = new Set();
-            uniqueCourses.forEach(course => {
-                const courseKey = course === 'LAW' ? 'Law/Forensic Science' : course;
-                if (subjectMappings[courseKey]) {
-                    subjectMappings[courseKey].forEach(subject => allSubjects.add(subject));
-                }
-            });
-            
-            modalSubjects.innerHTML = Array.from(allSubjects).map(subject => `
-                <div class="flex items-center justify-between p-3 bg-blue-50 rounded-lg">
-                    <span class="font-medium text-gray-800">${subject}</span>
-                    <span class="text-sm text-gray-500">${uniqueCourses.map(course => getStreamAbbreviation(course)).join(', ')}</span>
-                </div>
-            `).join('');
-            
-            // Set up status update handler
-            document.getElementById('updateStudentStatus').onclick = () => {
-                const newStatus = statusSelect.value;
-                // Update all instances of this student
-                students.forEach(s => {
-                    if (s.name === studentName) {
-                        s.status = newStatus;
-                    }
-                });
-                // Re-render views
-                renderStudentView();
-                renderSchedule();
-                renderDetailedView();
-                // Update modal status display
-                modalStatus.innerHTML = `
-                    <span class="font-semibold">Status:</span>
-                    <span class="px-3 py-1 rounded-full text-sm font-medium ${getStatusColor(newStatus)}">
-                        ${getStatusDisplayName(newStatus)}
-                    </span>
-                `;
-            };
-            
+            modalStatus.innerHTML = '<div class="text-sm text-gray-500">Loading student data...</div>';
+            modalCourses.innerHTML = '<div class="text-sm text-gray-500">Loading courses...</div>';
+            modalSubjects.innerHTML = '<div class="text-sm text-gray-500">Loading subjects...</div>';
+            statusSelect.value = 'active'; // Default value
+
             modal.classList.add('show');
         }
 
@@ -1230,59 +949,14 @@
             const modalStudents = document.getElementById('teacherModalStudents');
             const modalSchedule = document.getElementById('teacherModalSchedule');
 
-            // Find the teacher
-            const teacher = teachers.find(t => t.name === teacherName);
-            if (!teacher) return;
-
+            // This function will need to be updated to fetch data from Supabase
+            // For now, it will render an empty modal.
             modalTitle.textContent = teacherName;
-            
-            // Set teacher info
-            modalInfo.innerHTML = `
-                <span class="font-semibold">Department:</span>
-                <span class="text-gray-800">${teacher.department}</span>
-            `;
-            
-            // Set subjects
-            modalSubjects.innerHTML = teacher.subjects.map(subject => `
-                <div class="flex items-center justify-between p-3 bg-green-50 rounded-lg">
-                    <span class="font-medium text-gray-800">${subject}</span>
-                </div>
-            `).join('');
-            
-            // Get students taught by this teacher
-            const teacherStudents = [];
-            teacher.subjects.forEach(subject => {
-                const studentsForSubject = getStudentsForClass(subject);
-                studentsForSubject.forEach(student => {
-                    if (!teacherStudents.find(s => s.name === student.name)) {
-                        teacherStudents.push(student);
-                    }
-                });
-            });
-            
-            modalStudents.innerHTML = teacherStudents.map(student => `
-                <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
-                    <div>
-                        <span class="font-medium text-gray-800">${student.name}</span>
-                        <div class="text-sm text-gray-500">${student.course}</div>
-                    </div>
-                    <span class="text-sm text-gray-500">${student.grade ? `Grade ${student.grade}` : 'N/A'}</span>
-                </div>
-            `).join('');
-            
-            // Get teacher's schedule
-            const teacherSchedule = schedule.filter(cls => cls.professor === teacherName);
-            
-            modalSchedule.innerHTML = teacherSchedule.map(cls => `
-                <div class="flex items-center justify-between p-3 bg-blue-50 rounded-lg">
-                    <div>
-                        <span class="font-medium text-gray-800">${cls.course}</span>
-                        <div class="text-sm text-gray-500">${cls.day}</div>
-                    </div>
-                    <span class="text-sm text-gray-500">${cls.startTime} - ${cls.endTime}</span>
-                </div>
-            `).join('');
-            
+            modalInfo.innerHTML = '<div class="text-sm text-gray-500">Loading teacher data...</div>';
+            modalSubjects.innerHTML = '<div class="text-sm text-gray-500">Loading subjects...</div>';
+            modalStudents.innerHTML = '<div class="text-sm text-gray-500">Loading students...</div>';
+            modalSchedule.innerHTML = '<div class="text-sm text-gray-500">Loading schedule...</div>';
+
             modal.classList.add('show');
         }
 
@@ -1296,14 +970,12 @@
         }
 
         function updateStats() {
-            const uniqueStudents = getUniqueStudents(students);
-            const uniqueProfessors = [...new Set(schedule.map(cls => cls.professor))];
-            const uniqueCourses = Object.keys(subjectMappings);
-            
-            document.getElementById('totalClasses').textContent = schedule.length;
-            document.getElementById('totalStudents').textContent = uniqueStudents.length;
-            document.getElementById('totalProfessors').textContent = uniqueProfessors.length;
-            document.getElementById('totalCourses').textContent = uniqueCourses.length;
+            // This function will need to be updated to fetch data from Supabase
+            // For now, it will update with default values.
+            document.getElementById('totalClasses').textContent = 'N/A';
+            document.getElementById('totalStudents').textContent = 'N/A';
+            document.getElementById('totalProfessors').textContent = 'N/A';
+            document.getElementById('totalCourses').textContent = 'N/A';
         }
 
         // Event listeners
