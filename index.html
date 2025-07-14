@@ -326,6 +326,32 @@
         </div>
     </div>
 
+    <!-- Add Login button and Admin indicator to header -->
+    <div class="flex justify-end items-center gap-4 mb-4">
+        <span id="adminIndicator" class="hidden text-sm text-green-700 font-semibold bg-green-100 px-3 py-1 rounded">Admin</span>
+        <button id="loginBtn" class="btn-secondary px-6 py-2 rounded font-semibold text-gray-700">Login</button>
+        <button id="logoutBtn" class="btn-secondary px-6 py-2 rounded font-semibold text-gray-700 hidden">Logout</button>
+    </div>
+
+    <!-- Login Modal -->
+    <div id="loginModal" class="modal">
+        <div class="modal-content glass-effect rounded-2xl max-w-sm w-full p-8 shadow-2xl">
+            <h2 class="text-2xl font-bold gradient-text mb-6 text-center">Admin Login</h2>
+            <form id="loginForm" class="space-y-4">
+                <div>
+                    <label class="block text-gray-700 mb-1">Username</label>
+                    <input id="loginUsername" type="text" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500" required />
+                </div>
+                <div>
+                    <label class="block text-gray-700 mb-1">Password</label>
+                    <input id="loginPassword" type="password" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500" required />
+                </div>
+                <div id="loginError" class="text-red-600 text-sm hidden"></div>
+                <button type="submit" class="btn-primary w-full py-2 rounded-lg font-semibold text-white">Login</button>
+            </form>
+        </div>
+    </div>
+
     <div class="max-w-7xl mx-auto px-6 pb-8">
         <!-- Stats Overview -->
         <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
@@ -347,22 +373,22 @@
             </div>
         </div>
 
-        <!-- Navigation Buttons -->
-        <div class="flex justify-center gap-4 mb-8">
+        <!-- Add Subject Catalog tab to navigation -->
+        <div class="flex flex-wrap gap-4 mb-8 justify-center">
             <button id="scheduleBtn" class="btn-primary px-8 py-3 rounded-xl font-semibold flex items-center gap-3 text-white shadow-lg">
-                📅 Schedule View
+                <span>📅 Schedule View</span>
             </button>
             <button id="detailedBtn" class="btn-secondary px-8 py-3 rounded-xl font-semibold flex items-center gap-3 text-gray-700">
-                📋 Detailed Overview
+                <span>🗂️ Detailed Overview</span>
             </button>
             <button id="coursesBtn" class="btn-secondary px-8 py-3 rounded-xl font-semibold flex items-center gap-3 text-gray-700">
-                📚 Course Overview
+                <span>📚 Course Overview</span>
             </button>
             <button id="studentsBtn" class="btn-secondary px-8 py-3 rounded-xl font-semibold flex items-center gap-3 text-gray-700">
-                👥 Student Overview
+                <span>👥 Student Overview</span>
             </button>
             <button id="teachersBtn" class="btn-secondary px-8 py-3 rounded-xl font-semibold flex items-center gap-3 text-gray-700">
-                👨‍🏫 Teacher Overview
+                <span>👨‍🏫 Teacher Overview</span>
             </button>
         </div>
 
@@ -574,49 +600,78 @@
         </div>
     </div>
 
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm"></script>
+    <!-- Use the UMD version of Supabase JS -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
 
+    <!-- Main Supabase and app logic -->
     <script type="module">
-        // Supabase initialization
-        const supabaseUrl = 'https://mobotuypivjzrnrcmuhq.supabase.co'; // <-- Replace with your Supabase URL
-        const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im1vYm90dXlwaXZqenJucmNtdWhxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTI0NTg1MzYsImV4cCI6MjA2ODAzNDUzNn0.m8WYNG_maJlW42gF1K2Er64O0o6wPx-tKxpc7EKWW64'; // <-- Replace with your anon key
-        const supabase = window.supabase.createClient(supabaseUrl, supabaseKey);
-
-        // Data holders
+        // Declare main data holders at the top
         let students = [];
         let teachers = [];
         let courses = [];
         let subjects = [];
         let schedule = [];
+        // Declare mapping table holders at the top
         let studentCourses = [];
         let studentSubjects = [];
         let teacherSubjects = [];
         let teacherStudents = [];
+        // Declare days and timeSlots for schedule rendering
+        const days = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
+        const timeSlots = ['10:00 AM', '11:00 AM', '1:00 PM', '3:00 PM', '4:00 PM', '5:00 PM', '6:00 PM', '7:00 PM'];
+        // Add class abbreviation mapping
+        const classAbbreviations = {
+          "Engineering": "ENG",
+          "Medicine": "MED",
+          "Law/Forensic Science": "LAW",
+          "Business": "BUS",
+          "Aviation": "AVI"
+        };
 
-        // Fetch all data from Supabase
-        async function fetchAllData() {
-            // Fetch in parallel
-            const [studentsRes, teachersRes, coursesRes, subjectsRes, scheduleRes, studentCoursesRes, studentSubjectsRes, teacherSubjectsRes, teacherStudentsRes] = await Promise.all([
-                supabase.from('students').select('*'),
-                supabase.from('teachers').select('*'),
-                supabase.from('courses').select('*'),
-                supabase.from('subjects').select('*'),
-                supabase.from('schedule').select('*'),
-                supabase.from('student_courses').select('*'),
-                supabase.from('student_subjects').select('*'),
-                supabase.from('teacher_subjects').select('*'),
-                supabase.from('teacher_students').select('*'),
-            ]);
-            students = studentsRes.data || [];
-            teachers = teachersRes.data || [];
-            courses = coursesRes.data || [];
-            subjects = subjectsRes.data || [];
-            schedule = scheduleRes.data || [];
-            studentCourses = studentCoursesRes.data || [];
-            studentSubjects = studentSubjectsRes.data || [];
-            teacherSubjects = teacherSubjectsRes.data || [];
-            teacherStudents = teacherStudentsRes.data || [];
-        }
+        // Supabase initialization
+        const supabaseUrl = 'https://mobotuypivjzrnrcmuhq.supabase.co';
+        const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im1vYm90dXlwaXZqenJucmNtdWhxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTI0NTg1MzYsImV4cCI6MjA2ODAzNDUzNn0.m8WYNG_maJlW42gF1K2Er64O0o6wPx-tKxpc7EKWW64';
+        const supabase = window.supabase.createClient(supabaseUrl, supabaseKey);
+
+        // Debug logging for all main tables (use unique variable names)
+        const { data: studentsDebug, error: studentsDebugError } = await supabase.from('students').select('*');
+        console.log("Fetched students:", studentsDebug, studentsDebugError);
+        const { data: teachersDebug, error: teachersDebugError } = await supabase.from('teachers').select('*');
+        console.log("Fetched teachers:", teachersDebug, teachersDebugError);
+        const { data: coursesDebug, error: coursesDebugError } = await supabase.from('courses').select('*');
+        console.log("Fetched courses:", coursesDebug, coursesDebugError);
+        const { data: subjectsDebug, error: subjectsDebugError } = await supabase.from('subjects').select('*');
+        console.log("Fetched subjects:", subjectsDebug, subjectsDebugError);
+        const { data: scheduleDebug, error: scheduleDebugError } = await supabase.from('schedule').select('*');
+        console.log("Fetched schedule:", scheduleDebug, scheduleDebugError);
+
+        // Fetch mapping tables
+        const { data: studentCoursesDebug } = await supabase.from('student_courses').select('*');
+        console.log("Fetched student_courses:", studentCoursesDebug);
+        const { data: studentSubjectsDebug } = await supabase.from('student_subjects').select('*');
+        console.log("Fetched student_subjects:", studentSubjectsDebug);
+        const { data: teacherSubjectsDebug } = await supabase.from('teacher_subjects').select('*');
+        console.log("Fetched teacher_subjects:", teacherSubjectsDebug);
+        const { data: teacherStudentsDebug } = await supabase.from('teacher_students').select('*');
+        console.log("Fetched teacher_students:", teacherStudentsDebug);
+
+        // Assign fetched data to main variables used by render functions
+        students = studentsDebug;
+        console.log('Sample student:', students[0]);
+        teachers = teachersDebug;
+        courses = coursesDebug;
+        subjects = subjectsDebug;
+        schedule = scheduleDebug;
+        studentCourses = studentCoursesDebug;
+        studentSubjects = studentSubjectsDebug;
+        teacherSubjects = teacherSubjectsDebug;
+        teacherStudents = teacherStudentsDebug;
+
+        // Call render functions to update the UI
+        renderCourseView();
+        renderStudentView();
+        renderTeacherView();
+        updateStats();
 
         // Helper: Get students for a subject/course
         function getStudentsForClass(subjectName) {
@@ -645,7 +700,7 @@
             return schedule.find(cls => cls.day === day && cls.start_time === timeSlot);
         }
 
-        function getCourseColor(courseName) {
+       function getCourseColor(courseName) {
             const colors = {
                 'AP Spanish': 'bg-gradient-to-br from-blue-100 to-blue-200 border-blue-300 text-blue-800',
                 'US History/Govt': 'bg-gradient-to-br from-green-100 to-green-200 border-green-300 text-green-800',
@@ -806,12 +861,13 @@
                         let studentsHtml = '';
                         Object.entries(studentsByCourse).forEach(([course, courseStudents]) => {
                             const abbrev = getStreamAbbreviation(course);
-                            studentsHtml += courseStudents.map(student => 
-                                `<div class="text-xs text-gray-700 mb-1 flex items-center justify-between">
-                                    <span class="truncate flex-1">${student.name}</span>
-                                    <span class="ml-2 px-2 py-0.5 bg-white bg-opacity-60 rounded text-xs font-medium">${abbrev}</span>
-                                </div>`
-                            ).join('');
+                            studentsHtml += courseStudents.map(student => {
+  const abbrev = classAbbreviations[student.class] || 'UND';
+  return `<div class="text-xs text-gray-700 mb-1 flex items-center justify-between">
+      <span class="truncate flex-1">${student.name}</span>
+      <span class="ml-2 px-2 py-0.5 bg-white bg-opacity-60 rounded text-xs font-medium">${abbrev}</span>
+  </div>`;
+}).join('');
                         });
                         
                         classDiv.innerHTML = `
@@ -847,28 +903,135 @@
         function renderCourseView() {
             const container = document.getElementById('courseView');
             container.innerHTML = '';
-
-            // This function will need to be updated to fetch data from Supabase
-            // For now, it will render an empty grid.
-            container.innerHTML = '<div class="text-center py-16 text-gray-500">Loading Courses...</div>';
+            courses.forEach(course => {
+                // Students in this course
+                const courseStudentIds = studentCourses.filter(sc => sc.course_id === course.id).map(sc => sc.student_id);
+                const courseStudents = students.filter(s => courseStudentIds.includes(s.id));
+                // Subjects in this course
+                const courseSubjects = subjects.filter(subj => subj.course_id === course.id);
+                const courseCard = document.createElement('div');
+                courseCard.className = 'glass-effect rounded-2xl shadow-xl p-8 hover:shadow-2xl transition-all duration-300';
+                courseCard.innerHTML = `
+                    <div class="text-center mb-6">
+                        <h3 class="text-2xl font-bold gradient-text mb-2">${course.name}</h3>
+                        <div class="w-16 h-1 bg-gradient-to-r from-blue-500 to-purple-500 mx-auto rounded-full"></div>
+                    </div>
+                    <div class="mb-6">
+                        <div class="flex items-center justify-between mb-4">
+                            <h4 class="font-semibold text-gray-800 flex items-center gap-2">👥 Students</h4>
+                            <span class="bg-blue-100 text-blue-800 px-3 py-1 rounded-full text-sm font-medium">${courseStudents.length}</span>
+                        </div>
+                        <div class="space-y-2 max-h-48 overflow-y-auto">
+                            ${courseStudents.map(student => `
+                                <div class="student-card text-sm text-gray-700 bg-gray-50 px-4 py-3 rounded-lg flex justify-between items-center">
+                                    <span class="font-medium">${student.name}</span>
+                                    <span class="text-xs text-gray-500">${student.grade ? `Grade ${student.grade}` : 'N/A'}</span>
+                                </div>
+                            `).join('')}
+                        </div>
+                    </div>
+                    <div>
+                        <div class="flex items-center justify-between mb-4">
+                            <h4 class="font-semibold text-gray-800 flex items-center gap-2">📚 Subjects</h4>
+                            <span class="bg-green-100 text-green-800 px-3 py-1 rounded-full text-sm font-medium">${courseSubjects.length}</span>
+                        </div>
+                        <div class="flex flex-wrap gap-2">
+                            ${courseSubjects.map(subject => `
+                                <div class="course-badge text-xs text-gray-600 bg-blue-50 px-3 py-2 rounded-lg border border-blue-200">${subject.name}</div>
+                            `).join('')}
+                        </div>
+                    </div>
+                `;
+                container.appendChild(courseCard);
+            });
         }
 
         function renderStudentView() {
             const container = document.getElementById('studentView');
             container.innerHTML = '';
-
-            // This function will need to be updated to fetch data from Supabase
-            // For now, it will render an empty grid.
-            container.innerHTML = '<div class="text-center py-16 text-gray-500">Loading Students...</div>';
+            students.forEach(student => {
+                // Courses for this student
+                const enrolledCourseIds = studentCourses.filter(sc => sc.student_id === student.id).map(sc => sc.course_id);
+                const enrolledCourses = courses.filter(c => enrolledCourseIds.includes(c.id));
+                // Subjects for this student
+                const enrolledSubjectIds = studentSubjects.filter(ss => ss.student_id === student.id).map(ss => ss.subject_id);
+                const enrolledSubjects = subjects.filter(s => enrolledSubjectIds.includes(s.id));
+                const studentCard = document.createElement('div');
+                studentCard.className = 'glass-effect rounded-2xl shadow-xl p-8 hover:shadow-2xl transition-all duration-300 cursor-pointer';
+                studentCard.onclick = () => openStudentModal(student.id);
+                studentCard.innerHTML = `
+                    <div class="text-center mb-6">
+                        <h3 class="text-2xl font-bold gradient-text mb-2">${student.name}</h3>
+                        <div class="w-16 h-1 bg-gradient-to-r from-purple-500 to-pink-500 mx-auto rounded-full"></div>
+                    </div>
+                    <div class="mb-6">
+                        <div class="flex items-center justify-between mb-4">
+                            <h4 class="font-semibold text-gray-800 flex items-center gap-2">📊 Status</h4>
+                            <span class="px-3 py-1 rounded-full text-sm font-medium bg-gray-100 text-gray-800 border-gray-200">${student.status}</span>
+                        </div>
+                        <div class="text-sm text-gray-600">Grade: ${student.grade ? `Grade ${student.grade}` : 'N/A'}</div>
+                    </div>
+                    <div class="mb-6">
+                        <div class="flex items-center justify-between mb-4">
+                            <h4 class="font-semibold text-gray-800 flex items-center gap-2">📚 Courses</h4>
+                            <span class="bg-blue-100 text-blue-800 px-3 py-1 rounded-full text-sm font-medium">${enrolledCourses.length}</span>
+                        </div>
+                        <div class="flex flex-wrap gap-2">
+                            ${enrolledCourses.map(course => `<div class="course-badge text-xs text-gray-600 bg-blue-50 px-3 py-2 rounded-lg border border-blue-200">${course.name}</div>`).join('')}
+                        </div>
+                    </div>
+                    <div>
+                        <div class="flex items-center justify-between mb-4">
+                            <h4 class="font-semibold text-gray-800 flex items-center gap-2">📖 Subjects</h4>
+                            <span class="bg-green-100 text-green-800 px-3 py-1 rounded-full text-sm font-medium">${enrolledSubjects.length}</span>
+                        </div>
+                        <div class="text-sm text-gray-500">Click to view all subjects and edit status</div>
+                    </div>
+                `;
+                container.appendChild(studentCard);
+            });
         }
 
         function renderTeacherView() {
             const container = document.getElementById('teacherView');
             container.innerHTML = '';
-
-            // This function will need to be updated to fetch data from Supabase
-            // For now, it will render an empty grid.
-            container.innerHTML = '<div class="text-center py-16 text-gray-500">Loading Teachers...</div>';
+            teachers.forEach(teacher => {
+                // Subjects taught by this teacher
+                const subjectIds = teacherSubjects.filter(ts => ts.teacher_id === teacher.id).map(ts => ts.subject_id);
+                const taughtSubjects = subjects.filter(s => subjectIds.includes(s.id));
+                // Students taught by this teacher (any student enrolled in any of their subjects)
+                const studentIds = new Set();
+                taughtSubjects.forEach(subject => {
+                    studentSubjects.filter(ss => ss.subject_id === subject.id).forEach(ss => studentIds.add(ss.student_id));
+                });
+                const teacherStudentsList = students.filter(s => studentIds.has(s.id));
+                const teacherCard = document.createElement('div');
+                teacherCard.className = 'glass-effect rounded-2xl shadow-xl p-8 hover:shadow-2xl transition-all duration-300 cursor-pointer';
+                teacherCard.onclick = () => openTeacherModal(teacher.id);
+                teacherCard.innerHTML = `
+                    <div class="text-center mb-6">
+                        <h3 class="text-2xl font-bold gradient-text mb-2">${teacher.name}</h3>
+                        <div class="w-16 h-1 bg-gradient-to-r from-green-500 to-teal-500 mx-auto rounded-full"></div>
+                    </div>
+                    <div class="mb-6">
+                        <div class="flex items-center justify-between mb-4">
+                            <h4 class="font-semibold text-gray-800 flex items-center gap-2">📚 Subjects</h4>
+                            <span class="bg-green-100 text-green-800 px-3 py-1 rounded-full text-sm font-medium">${taughtSubjects.length}</span>
+                        </div>
+                        <div class="flex flex-wrap gap-2">
+                            ${taughtSubjects.map(subject => `<div class="course-badge text-xs text-gray-600 bg-green-50 px-3 py-2 rounded-lg border border-green-200">${subject.name}</div>`).join('')}
+                        </div>
+                    </div>
+                    <div class="mb-6">
+                        <div class="flex items-center justify-between mb-4">
+                            <h4 class="font-semibold text-gray-800 flex items-center gap-2">👥 Students</h4>
+                            <span class="bg-blue-100 text-blue-800 px-3 py-1 rounded-full text-sm font-medium">${teacherStudentsList.length}</span>
+                        </div>
+                        <div class="text-sm text-gray-600">${teacher.status || ''}</div>
+                    </div>
+                `;
+                container.appendChild(teacherCard);
+            });
         }
 
         function openModal(classInfo) {
@@ -878,6 +1041,11 @@
             const modalProfessor = document.getElementById('modalProfessor');
             const modalStudents = document.getElementById('modalStudents');
             const studentCount = document.getElementById('studentCount');
+
+            // Fix: define uniqueStudents for this class
+            const uniqueStudents = getUniqueStudents(getStudentsForClass(classInfo.course));
+            studentCount.textContent = uniqueStudents.length;
+            console.log('uniqueStudents in modal:', uniqueStudents);
 
             modalTitle.textContent = classInfo.course;
             
@@ -894,20 +1062,20 @@
                 👤 <span class="font-semibold text-lg">Professor: ${classInfo.professor}</span>
             `;
             
-            const uniqueStudents = getUniqueStudents(getStudentsForClass(classInfo.course));
-            studentCount.textContent = uniqueStudents.length;
-            
-            modalStudents.innerHTML = uniqueStudents.map(student => `
-                <div class="student-card flex justify-between items-center p-4 bg-gray-50 rounded-xl">
-                    <div>
-                        <span class="font-semibold text-gray-800">${student.name}</span>
-                        <div class="text-sm text-gray-500">${student.course}</div>
-                    </div>
-                    <div class="text-sm text-gray-500 bg-white px-3 py-1 rounded-full">
-                        ${student.grade ? `Grade ${student.grade}` : 'N/A'}
-                    </div>
-                </div>
-            `).join('');
+            modalStudents.innerHTML = uniqueStudents.map(student => {
+    const abbrev = classAbbreviations[student.class] || 'UND';
+    return `
+    <div class="student-card flex justify-between items-center p-4 bg-gray-50 rounded-xl">
+        <div>
+            <span class="font-semibold text-gray-800">${student.name}</span>
+            <span class="ml-2 px-2 py-0.5 bg-white bg-opacity-60 rounded text-xs font-medium">${abbrev}</span>
+        </div>
+        <div class="text-sm text-gray-500 bg-white px-3 py-1 rounded-full">
+            ${student.grade ? `Grade ${student.grade}` : 'N/A'}
+        </div>
+    </div>
+    `;
+}).join('');
             
             modal.classList.add('show');
         }
@@ -917,22 +1085,34 @@
             modal.classList.remove('show');
         }
 
-        function openStudentModal(studentName) {
+        function openStudentModal(studentId) {
             const modal = document.getElementById('studentModal');
             const modalTitle = document.getElementById('studentModalTitle');
             const modalStatus = document.getElementById('studentModalStatus');
             const modalCourses = document.getElementById('studentModalCourses');
             const modalSubjects = document.getElementById('studentModalSubjects');
             const statusSelect = document.getElementById('studentStatusSelect');
-
-            // This function will need to be updated to fetch data from Supabase
-            // For now, it will render an empty modal.
-            modalTitle.textContent = studentName;
-            modalStatus.innerHTML = '<div class="text-sm text-gray-500">Loading student data...</div>';
-            modalCourses.innerHTML = '<div class="text-sm text-gray-500">Loading courses...</div>';
-            modalSubjects.innerHTML = '<div class="text-sm text-gray-500">Loading subjects...</div>';
-            statusSelect.value = 'active'; // Default value
-
+            const student = students.find(s => s.id === studentId);
+            if (!student) return;
+            modalTitle.textContent = student.name;
+            modalStatus.innerHTML = `<span class="font-semibold">Status:</span> <span class="px-3 py-1 rounded-full text-sm font-medium bg-gray-100 text-gray-800 border-gray-200">${student.status}</span>`;
+            // Courses
+            const enrolledCourseIds = studentCourses.filter(sc => sc.student_id === student.id).map(sc => sc.course_id);
+            const enrolledCourses = courses.filter(c => enrolledCourseIds.includes(c.id));
+            modalCourses.innerHTML = enrolledCourses.map(course => `
+                <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                    <span class="font-medium text-gray-800">${course.name}</span>
+                </div>
+            `).join('');
+            // Subjects
+            const enrolledSubjectIds = studentSubjects.filter(ss => ss.student_id === student.id).map(ss => ss.subject_id);
+            const enrolledSubjects = subjects.filter(s => enrolledSubjectIds.includes(s.id));
+            modalSubjects.innerHTML = enrolledSubjects.map(subject => `
+                <div class="flex items-center justify-between p-3 bg-blue-50 rounded-lg">
+                    <span class="font-medium text-gray-800">${subject.name}</span>
+                </div>
+            `).join('');
+            statusSelect.value = student.status;
             modal.classList.add('show');
         }
 
@@ -941,22 +1121,45 @@
             modal.classList.remove('show');
         }
 
-        function openTeacherModal(teacherName) {
+        function openTeacherModal(teacherId) {
             const modal = document.getElementById('teacherModal');
             const modalTitle = document.getElementById('teacherModalTitle');
             const modalInfo = document.getElementById('teacherModalInfo');
             const modalSubjects = document.getElementById('teacherModalSubjects');
             const modalStudents = document.getElementById('teacherModalStudents');
             const modalSchedule = document.getElementById('teacherModalSchedule');
-
-            // This function will need to be updated to fetch data from Supabase
-            // For now, it will render an empty modal.
-            modalTitle.textContent = teacherName;
-            modalInfo.innerHTML = '<div class="text-sm text-gray-500">Loading teacher data...</div>';
-            modalSubjects.innerHTML = '<div class="text-sm text-gray-500">Loading subjects...</div>';
-            modalStudents.innerHTML = '<div class="text-sm text-gray-500">Loading students...</div>';
-            modalSchedule.innerHTML = '<div class="text-sm text-gray-500">Loading schedule...</div>';
-
+            const teacher = teachers.find(t => t.id === teacherId);
+            if (!teacher) return;
+            modalTitle.textContent = teacher.name;
+            // Subjects
+            const subjectIds = teacherSubjects.filter(ts => ts.teacher_id === teacher.id).map(ts => ts.subject_id);
+            const taughtSubjects = subjects.filter(s => subjectIds.includes(s.id));
+            modalSubjects.innerHTML = taughtSubjects.map(subject => `
+                <div class="flex items-center justify-between p-3 bg-green-50 rounded-lg">
+                    <span class="font-medium text-gray-800">${subject.name}</span>
+                </div>
+            `).join('');
+            // Students
+            const studentIds = new Set();
+            taughtSubjects.forEach(subject => {
+                studentSubjects.filter(ss => ss.subject_id === subject.id).forEach(ss => studentIds.add(ss.student_id));
+            });
+            const teacherStudentsList = students.filter(s => studentIds.has(s.id));
+            modalStudents.innerHTML = teacherStudentsList.map(student => `
+                <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                    <span class="font-medium text-gray-800">${student.name}</span>
+                </div>
+            `).join('');
+            // Schedule
+            const teacherSchedule = schedule.filter(cls => cls.professor_id === teacher.id);
+            modalSchedule.innerHTML = teacherSchedule.map(cls => {
+                const subject = subjects.find(s => s.id === cls.subject_id);
+                return `<div class="flex items-center justify-between p-3 bg-blue-50 rounded-lg">
+                    <span class="font-medium text-gray-800">${subject?.name || '-'}</span>
+                    <span class="text-sm text-gray-500">${cls.day} ${cls.start_time} - ${cls.end_time}</span>
+                </div>`;
+            }).join('');
+            modalInfo.innerHTML = `<span class="font-semibold">Status:</span> <span class="text-gray-800">${teacher.status || ''}</span>`;
             modal.classList.add('show');
         }
 
@@ -970,12 +1173,10 @@
         }
 
         function updateStats() {
-            // This function will need to be updated to fetch data from Supabase
-            // For now, it will update with default values.
-            document.getElementById('totalClasses').textContent = 'N/A';
-            document.getElementById('totalStudents').textContent = 'N/A';
-            document.getElementById('totalProfessors').textContent = 'N/A';
-            document.getElementById('totalCourses').textContent = 'N/A';
+            document.getElementById('totalClasses').textContent = schedule.length;
+            document.getElementById('totalStudents').textContent = students.length;
+            document.getElementById('totalProfessors').textContent = teachers.length;
+            document.getElementById('totalCourses').textContent = courses.length;
         }
 
         // Event listeners
@@ -985,11 +1186,13 @@
             document.getElementById('courseView').style.display = 'none';
             document.getElementById('studentView').style.display = 'none';
             document.getElementById('teacherView').style.display = 'none';
+            document.getElementById('subjectCatalogView').style.display = 'none'; // Hide subject catalog
             document.getElementById('scheduleBtn').className = 'btn-primary px-8 py-3 rounded-xl font-semibold flex items-center gap-3 text-white shadow-lg';
             document.getElementById('detailedBtn').className = 'btn-secondary px-8 py-3 rounded-xl font-semibold flex items-center gap-3 text-gray-700';
             document.getElementById('coursesBtn').className = 'btn-secondary px-8 py-3 rounded-xl font-semibold flex items-center gap-3 text-gray-700';
             document.getElementById('studentsBtn').className = 'btn-secondary px-8 py-3 rounded-xl font-semibold flex items-center gap-3 text-gray-700';
             document.getElementById('teachersBtn').className = 'btn-secondary px-8 py-3 rounded-xl font-semibold flex items-center gap-3 text-gray-700';
+            document.getElementById('subjectCatalogBtn').className = 'btn-secondary px-8 py-3 rounded-xl font-semibold flex items-center gap-3 text-gray-700';
             updateCurrentView('schedule');
         });
 
@@ -999,11 +1202,13 @@
             document.getElementById('courseView').style.display = 'none';
             document.getElementById('studentView').style.display = 'none';
             document.getElementById('teacherView').style.display = 'none';
+            document.getElementById('subjectCatalogView').style.display = 'none'; // Hide subject catalog
             document.getElementById('scheduleBtn').className = 'btn-secondary px-8 py-3 rounded-xl font-semibold flex items-center gap-3 text-gray-700';
             document.getElementById('detailedBtn').className = 'btn-primary px-8 py-3 rounded-xl font-semibold flex items-center gap-3 text-white shadow-lg';
             document.getElementById('coursesBtn').className = 'btn-secondary px-8 py-3 rounded-xl font-semibold flex items-center gap-3 text-gray-700';
             document.getElementById('studentsBtn').className = 'btn-secondary px-8 py-3 rounded-xl font-semibold flex items-center gap-3 text-gray-700';
             document.getElementById('teachersBtn').className = 'btn-secondary px-8 py-3 rounded-xl font-semibold flex items-center gap-3 text-gray-700';
+            document.getElementById('subjectCatalogBtn').className = 'btn-secondary px-8 py-3 rounded-xl font-semibold flex items-center gap-3 text-gray-700';
             updateCurrentView('detailed');
         });
 
@@ -1013,11 +1218,13 @@
             document.getElementById('courseView').style.display = 'grid';
             document.getElementById('studentView').style.display = 'none';
             document.getElementById('teacherView').style.display = 'none';
+            document.getElementById('subjectCatalogView').style.display = 'none'; // Hide subject catalog
             document.getElementById('scheduleBtn').className = 'btn-secondary px-8 py-3 rounded-xl font-semibold flex items-center gap-3 text-gray-700';
             document.getElementById('detailedBtn').className = 'btn-secondary px-8 py-3 rounded-xl font-semibold flex items-center gap-3 text-gray-700';
             document.getElementById('coursesBtn').className = 'btn-primary px-8 py-3 rounded-xl font-semibold flex items-center gap-3 text-white shadow-lg';
             document.getElementById('studentsBtn').className = 'btn-secondary px-8 py-3 rounded-xl font-semibold flex items-center gap-3 text-gray-700';
             document.getElementById('teachersBtn').className = 'btn-secondary px-8 py-3 rounded-xl font-semibold flex items-center gap-3 text-gray-700';
+            document.getElementById('subjectCatalogBtn').className = 'btn-secondary px-8 py-3 rounded-xl font-semibold flex items-center gap-3 text-gray-700';
             updateCurrentView('courses');
         });
 
@@ -1027,11 +1234,13 @@
             document.getElementById('courseView').style.display = 'none';
             document.getElementById('studentView').style.display = 'grid';
             document.getElementById('teacherView').style.display = 'none';
+            document.getElementById('subjectCatalogView').style.display = 'none'; // Hide subject catalog
             document.getElementById('scheduleBtn').className = 'btn-secondary px-8 py-3 rounded-xl font-semibold flex items-center gap-3 text-gray-700';
             document.getElementById('detailedBtn').className = 'btn-secondary px-8 py-3 rounded-xl font-semibold flex items-center gap-3 text-gray-700';
             document.getElementById('coursesBtn').className = 'btn-secondary px-8 py-3 rounded-xl font-semibold flex items-center gap-3 text-gray-700';
             document.getElementById('studentsBtn').className = 'btn-primary px-8 py-3 rounded-xl font-semibold flex items-center gap-3 text-white shadow-lg';
             document.getElementById('teachersBtn').className = 'btn-secondary px-8 py-3 rounded-xl font-semibold flex items-center gap-3 text-gray-700';
+            document.getElementById('subjectCatalogBtn').className = 'btn-secondary px-8 py-3 rounded-xl font-semibold flex items-center gap-3 text-gray-700';
             updateCurrentView('students');
         });
 
@@ -1041,12 +1250,37 @@
             document.getElementById('courseView').style.display = 'none';
             document.getElementById('studentView').style.display = 'none';
             document.getElementById('teacherView').style.display = 'grid';
+            document.getElementById('subjectCatalogView').style.display = 'none'; // Hide subject catalog
             document.getElementById('scheduleBtn').className = 'btn-secondary px-8 py-3 rounded-xl font-semibold flex items-center gap-3 text-gray-700';
             document.getElementById('detailedBtn').className = 'btn-secondary px-8 py-3 rounded-xl font-semibold flex items-center gap-3 text-gray-700';
             document.getElementById('coursesBtn').className = 'btn-secondary px-8 py-3 rounded-xl font-semibold flex items-center gap-3 text-gray-700';
             document.getElementById('studentsBtn').className = 'btn-secondary px-8 py-3 rounded-xl font-semibold flex items-center gap-3 text-gray-700';
             document.getElementById('teachersBtn').className = 'btn-primary px-8 py-3 rounded-xl font-semibold flex items-center gap-3 text-white shadow-lg';
+            document.getElementById('subjectCatalogBtn').className = 'btn-secondary px-8 py-3 rounded-xl font-semibold flex items-center gap-3 text-gray-700';
             updateCurrentView('teachers');
+        });
+
+        document.getElementById('subjectCatalogBtn').addEventListener('click', () => {
+            document.getElementById('scheduleView').style.display = 'none';
+            document.getElementById('detailedView').style.display = 'none';
+            document.getElementById('courseView').style.display = 'none';
+            document.getElementById('studentView').style.display = 'none';
+            document.getElementById('teacherView').style.display = 'none';
+            document.getElementById('subjectCatalogView').style.display = 'block';
+            // Tab styling
+            document.getElementById('scheduleBtn').className = 'btn-secondary px-8 py-3 rounded-xl font-semibold flex items-center gap-3 text-gray-700';
+            document.getElementById('detailedBtn').className = 'btn-secondary px-8 py-3 rounded-xl font-semibold flex items-center gap-3 text-gray-700';
+            document.getElementById('coursesBtn').className = 'btn-secondary px-8 py-3 rounded-xl font-semibold flex items-center gap-3 text-gray-700';
+            document.getElementById('studentsBtn').className = 'btn-secondary px-8 py-3 rounded-xl font-semibold flex items-center gap-3 text-gray-700';
+            document.getElementById('teachersBtn').className = 'btn-secondary px-8 py-3 rounded-xl font-semibold flex items-center gap-3 text-gray-700';
+            document.getElementById('subjectCatalogBtn').className = 'btn-primary px-8 py-3 rounded-xl font-semibold flex items-center gap-3 text-white shadow-lg';
+            updateCurrentView('subjectCatalog');
+            // Render subject tree
+            renderSubjectTree(buildSubjectTree(subjects), document.getElementById('subjectSearch').value);
+        });
+
+        document.getElementById('subjectSearch').addEventListener('input', (e) => {
+            renderSubjectTree(buildSubjectTree(subjects), e.target.value);
         });
 
         document.getElementById('closeModal').addEventListener('click', closeModal);
@@ -1068,6 +1302,73 @@
         document.getElementById('teacherModal').addEventListener('click', (e) => {
             if (e.target === document.getElementById('teacherModal')) {
                 closeTeacherModal();
+            }
+        });
+
+        // --- Admin Auth Logic ---
+        const loginBtn = document.getElementById('loginBtn');
+        const logoutBtn = document.getElementById('logoutBtn');
+        const adminIndicator = document.getElementById('adminIndicator');
+        const loginModal = document.getElementById('loginModal');
+        const loginForm = document.getElementById('loginForm');
+        const loginError = document.getElementById('loginError');
+        const loginUsername = document.getElementById('loginUsername');
+        const loginPassword = document.getElementById('loginPassword');
+
+        function showLoginModal() {
+            loginModal.classList.add('show');
+            loginError.classList.add('hidden');
+            loginForm.reset();
+        }
+        function hideLoginModal() {
+            loginModal.classList.remove('show');
+        }
+
+        loginBtn.addEventListener('click', showLoginModal);
+        loginModal.addEventListener('click', (e) => {
+            if (e.target === loginModal) hideLoginModal();
+        });
+
+        // Check login state on load
+        function updateAdminUI() {
+            const isAdmin = localStorage.getItem('isAdmin') === 'true';
+            if (isAdmin) {
+                adminIndicator.classList.remove('hidden');
+                logoutBtn.classList.remove('hidden');
+                loginBtn.classList.add('hidden');
+            } else {
+                adminIndicator.classList.add('hidden');
+                logoutBtn.classList.add('hidden');
+                loginBtn.classList.remove('hidden');
+            }
+        }
+        updateAdminUI();
+
+        logoutBtn.addEventListener('click', () => {
+            localStorage.removeItem('isAdmin');
+            updateAdminUI();
+        });
+
+        // Login form submit
+        loginForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const username = loginUsername.value.trim();
+            const password = loginPassword.value;
+            // Fetch admin user from Supabase
+            const { data, error } = await supabase.from('admin_users').select('*').eq('username', username).single();
+            if (error || !data) {
+                loginError.textContent = 'Invalid username or password.';
+                loginError.classList.remove('hidden');
+                return;
+            }
+            // For demo: compare plaintext (in production, use password_hash and bcrypt)
+            if (username === 'admin' && password === 'admin123') {
+                localStorage.setItem('isAdmin', 'true');
+                updateAdminUI();
+                hideLoginModal();
+            } else {
+                loginError.textContent = 'Invalid username or password.';
+                loginError.classList.remove('hidden');
             }
         });
 
@@ -1257,6 +1558,49 @@
                     document.documentElement.style.setProperty('--header-offset', `${headerOffset}px`);
                 }
             }, 100);
+        }
+
+        // --- Subject Catalog Logic ---
+        function buildSubjectTree(subjects) {
+            const idToNode = {};
+            const roots = [];
+            subjects.forEach(subj => {
+                idToNode[subj.id] = { ...subj, children: [] };
+            });
+            subjects.forEach(subj => {
+                if (subj.parent_subject_id && idToNode[subj.parent_subject_id]) {
+                    idToNode[subj.parent_subject_id].children.push(idToNode[subj.id]);
+                } else {
+                    roots.push(idToNode[subj.id]);
+                }
+            });
+            return roots;
+        }
+
+        function renderSubjectTree(tree, filter = "") {
+            const container = document.getElementById('subjectTree');
+            container.innerHTML = '';
+            function renderNode(node, depth) {
+                // Filter logic
+                if (filter && !node.name.toLowerCase().includes(filter.toLowerCase()) && !node.children.some(child => child.name.toLowerCase().includes(filter.toLowerCase()))) {
+                    return '';
+                }
+                // Find course name
+                const course = courses.find(c => c.id === node.course_id);
+                let html = `<div style="margin-left: ${depth * 24}px" class="py-2">
+                    <span class="font-semibold text-gray-800">${node.name}</span>
+                    <span class="ml-2 px-2 py-0.5 bg-blue-100 text-blue-800 rounded text-xs font-medium">${course ? course.name : ''}</span>
+                </div>`;
+                if (node.children.length > 0) {
+                    node.children.forEach(child => {
+                        html += renderNode(child, depth + 1);
+                    });
+                }
+                return html;
+            }
+            tree.forEach(root => {
+                container.innerHTML += renderNode(root, 0);
+            });
         }
 
         // Initialize

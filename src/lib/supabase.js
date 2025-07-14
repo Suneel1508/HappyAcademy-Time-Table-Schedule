@@ -17,44 +17,84 @@ export const handleSupabaseError = (error) => {
   }
 }
 
-// Example database functions (you can customize these based on your schema)
 export const dbOperations = {
-  // Example: Get all students
+  // Get all students
   async getStudents() {
     const { data, error } = await supabase
       .from('students')
       .select('*')
-    
     handleSupabaseError(error)
     return data
   },
 
-  // Example: Get all courses
+  // Get all teachers
+  async getTeachers() {
+    const { data, error } = await supabase
+      .from('teachers')
+      .select('*')
+    handleSupabaseError(error)
+    return data
+  },
+
+  // Get all courses
   async getCourses() {
     const { data, error } = await supabase
       .from('courses')
       .select('*')
-    
     handleSupabaseError(error)
     return data
   },
 
-  // Example: Get schedule/timetable
+  // Get all subjects
+  async getSubjects() {
+    const { data, error } = await supabase
+      .from('subjects')
+      .select('*')
+    handleSupabaseError(error)
+    return data
+  },
+
+  // Get schedule/timetable
   async getSchedule() {
     const { data, error } = await supabase
       .from('schedule')
       .select('*')
-    
     handleSupabaseError(error)
     return data
   },
 
-  // Example: Get professors
-  async getProfessors() {
+  // Get student_courses mapping
+  async getStudentCourses() {
     const { data, error } = await supabase
-      .from('professors')
+      .from('student_courses')
       .select('*')
-    
+    handleSupabaseError(error)
+    return data
+  },
+
+  // Get student_subjects mapping
+  async getStudentSubjects() {
+    const { data, error } = await supabase
+      .from('student_subjects')
+      .select('*')
+    handleSupabaseError(error)
+    return data
+  },
+
+  // Get teacher_subjects mapping
+  async getTeacherSubjects() {
+    const { data, error } = await supabase
+      .from('teacher_subjects')
+      .select('*')
+    handleSupabaseError(error)
+    return data
+  },
+
+  // Get teacher_students mapping
+  async getTeacherStudents() {
+    const { data, error } = await supabase
+      .from('teacher_students')
+      .select('*')
     handleSupabaseError(error)
     return data
   }
