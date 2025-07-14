@@ -1,24 +1,22 @@
 import './style.css'
-import javascriptLogo from './javascript.svg'
-import viteLogo from '/vite.svg'
-import { setupCounter } from './counter.js'
+import { DatabaseTest } from './src/components/DatabaseTest.js'
+import { createElement } from 'react'
+import { createRoot } from 'react-dom/client'
 
 document.querySelector('#app').innerHTML = `
   <div>
-    <a href="https://vitejs.dev" target="_blank">
-      <img src="${viteLogo}" class="logo" alt="Vite logo" />
-    </a>
-    <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript" target="_blank">
-      <img src="${javascriptLogo}" class="logo vanilla" alt="JavaScript logo" />
-    </a>
-    <h1>Hello Vite!</h1>
+    <h1>Happy Academy Timetable</h1>
+    <p class="subtitle">Connecting to Supabase Database</p>
     <div class="card">
-      <button id="counter" type="button"></button>
+      <div id="database-test"></div>
     </div>
     <p class="read-the-docs">
-      Click on the Vite logo to learn more
+      Configure your Supabase credentials in the .env file
     </p>
   </div>
 `
 
-setupCounter(document.querySelector('#counter'))
+// Mount React component for database testing
+const container = document.querySelector('#database-test')
+const root = createRoot(container)
+root.render(createElement(DatabaseTest))
